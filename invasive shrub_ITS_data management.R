@@ -1,8 +1,12 @@
 library(phytools)
 library(reshape2)
+library(tidyr)
+library(dplyr)
+
+setwd('C:\\Users\\Kim\\Dropbox\\bigcb\\invasive shrubs project\\DNA work\\molecular data analysis')
 
 #mr bayes tree: 2 million runs, including native, invasive, and worldwide invasive species
-ITStreeNexus<-read.nexus(file='ITS_Mr Bayes Tree\\invasives_condensed_natives_condensed_worldwide_011615_aligned.nexus.con.tre')
+ITStreeNexus<-read.nexus(file='ITS data\\MrBayes tree\\2 mil runs\\La Pierre_invasive shrub_ITS_consensus sequences_97similarity.nexus.con.tre')
 
 #makes tree into a .phylo file instead of .newick or .tre
 ITStree<-as.phylo(ITStreeNexus) 
