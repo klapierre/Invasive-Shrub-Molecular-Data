@@ -12,20 +12,20 @@ ITStreeNexus<-read.nexus(file='ITS data\\MrBayes tree\\2 mil runs\\La Pierre_inv
 ITStree<-as.phylo(ITStreeNexus) 
 
 #root tree with Mesorhizobium outgroup
-ITStreeR<-root(ITStree, "ITS_Mesorhizobium", r=T)
+ITStreeR<-root(ITStree, "USDA_3622_liaoningense", r=T)
 
 #plot trees
 plot.phylo(ITStree, use.edge.length=T)
 plot.phylo(ITStree, use.edge.length=F)
 
 #making a tree with only Bay Area strains (i.e., not worldwide strains)
-BayAreaITStree<-drop.tip(ITStreeR, c("GV101", "GV104", "GV115", "GV102", "GV144", "GV159", "U118", "U115", "UU22sfb", "U29", "U21", "U23", "U13", "U214", "U12", "GV135", "GV137"))
+BayAreaITStree<-drop.tip(ITStreeR, c('U115', 'UU22sfb'))
 plot.phylo(BayAreaITStree, use.edge.length=F)
 
 #making a tree with only Brady japonicum strains
-BjITStree<-drop.tip(ITStreeR, c("Bsp01", "Rl01", "Rl02", "Rl03", "Rl04", "Rl05", "Rl06", "Rl07", "GV137")) 
+BjITStree<-drop.tip(ITStreeR, c('ITS K01a', 'ITS V01s', 'ITS W01a', 'ITS W01n', 'ITS X01z', 'ITS E01h')) 
 plot.phylo(BjITStree, use.edge.length=F)
 
 #making a tree with only Brady japonicum strains from the Bay Area
-BjBayAreaITStree<-drop.tip(ITStreeR, c("Bsp01", "Rl01", "Rl02", "Rl03", "Rl04", "Rl05", "Rl06", "Rl07", "GV101", "GV104", "GV115", "GV102", "GV144", "GV159", "U118", "U115", "UU22sfb", "U29", "U21", "U23", "U13", "U214", "U12", "GV135", "GV137"))
+BjBayAreaITStree<-drop.tip(ITStreeR, c('U115', 'UU22sfb', 'ITS K01a', 'ITS V01s', 'ITS W01a', 'ITS W01n', 'ITS X01z', 'ITS E01h'))
 plot.phylo(BjBayAreaITStree, use.edge.length=F)
