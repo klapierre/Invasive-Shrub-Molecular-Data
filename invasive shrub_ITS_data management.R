@@ -15,17 +15,17 @@ ITStree<-as.phylo(ITStreeNexus)
 ITStreeR<-root(ITStree, "USDA_3622_liaoningense", r=T)
 
 #plot trees
-plot.phylo(ITStree, use.edge.length=T)
-plot.phylo(ITStree, use.edge.length=F)
+plot.phylo(ITStreeR, use.edge.length=T)
+plot.phylo(ITStreeR, use.edge.length=F)
 
 #making a tree with only Bay Area strains (i.e., not worldwide strains)
 BayAreaITStree<-drop.tip(ITStreeR, c('U115', 'UU22sfb'))
 plot.phylo(BayAreaITStree, use.edge.length=F)
 
 #making a tree with only Brady japonicum strains
-BjITStree<-drop.tip(ITStreeR, c('ITS K01a', 'ITS V01s', 'ITS W01a', 'ITS W01n', 'ITS X01z', 'ITS E01h')) 
+BjITStree<-drop.tip(ITStreeR, c('ITS_K01a', 'IITS_V01s', 'ITS_W01a', 'ITS_W01n', 'ITS_X01z', 'ITS_E01h')) 
 plot.phylo(BjITStree, use.edge.length=F)
 
 #making a tree with only Brady japonicum strains from the Bay Area
-BjBayAreaITStree<-drop.tip(ITStreeR, c('U115', 'UU22sfb', 'ITS K01a', 'ITS V01s', 'ITS W01a', 'ITS W01n', 'ITS X01z', 'ITS E01h'))
+BjBayAreaITStree<-drop.tip(ITStreeR, c('U115', 'UU22sfb', 'ITS_K01a', 'IITS_V01s', 'ITS_W01a', 'ITS_W01n', 'ITS_X01z', 'ITS_E01h'))
 plot.phylo(BjBayAreaITStree, use.edge.length=F)
