@@ -29,3 +29,45 @@ plot.phylo(BayAreanifdtree, use.edge.length=F)
 #making a tree with only Brady japonicum strains from the Bay Area
 BjBayAreanifdtree<-drop.tip(nifdtreeR, c('nifd_03'))
 plot.phylo(BjBayAreanifdtree, use.edge.length=F)
+
+
+#####################
+# strain data management
+#####################
+#read in nodule data
+nifdNodules <- read.csv('strain data\\La Pierre_invasion molecular manuscript_strain information_092515.csv')%>%
+  select(plant_species, plant_status, nodule_ID, nifd_contig_95sim)
+
+#create an interaction matrix of strains for each plant species
+nifdInteractionMatrix <- nifdNodules%>%
+  select(plant_species, plant_status, nodule_ID, nifd_contig_95sim)%>%
+  filter(nifd_contig_95sim!='')%>%
+  mutate(interaction=1)%>%
+  spread(key=nifd_contig_95sim, value=interaction, fill=0)
+
+#subset out only Bay Area strains
+nifdBayAreaInteractionMatrix <- nifdInteractionMatrix%>%
+  filter(plant_species!='Ulex europaeus - Australia', plant_species!='Spartium junceum - Italy', plant_species!='Ulex europaeus - Portugul')%>%
+  #get summary interaction matrix (sum of interactions by species)
+  gather(key=nifd_contig_95sim, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
+  group_by(plant_status, plant_species, nifd_contig_95sim)%>%
+  summarise(interaction=sum(interaction))%>%
+  spread(key=nifd_contig_95sim, value=interaction)
+
+# #not relevent, because all non-brady japonicum strains grouped with a strain that was a bj
+# #subset out only brady japonicum strains
+# ITSbjInteractionMatrix <- nifdInteractionMatrix%>%
+#   #get summary interaction matrix (sum of interactions by species)
+#   gather(key=nifd_contig_95sim, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
+#   group_by(plant_status, plant_species, nifd_contig_95sim)%>%
+#   summarise(interaction=sum(interaction))%>%
+#   spread(key=nifd_contig_95sim, value=interaction)
+
+#subset out only Bay Area and brady japonicum strains
+nifdBjBayAreaInteractionMatrix <- nifdInteractionMatrix%>%
+  filter(plant_species!='Ulex europaeus - Australia', plant_species!='Spartium junceum - Italy', plant_species!='Ulex europaeus - Portugul')%>%
+  #get summary interaction matrix (sum of interactions by species)
+  gather(key=ITS_contig_97sim, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
+  group_by(plant_status, plant_species, ITS_contig_97sim)%>%
+  summarise(interaction=sum(interaction))%>%
+  spread(key=ITS_contig_97sim, value=interaction)
