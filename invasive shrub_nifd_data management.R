@@ -18,9 +18,9 @@ nifdtreeR<-root(nifdtree, "USDA_3622_liaoningense", r=T)
 plot.phylo(nifdtreeR, use.edge.length=T)
 plot.phylo(nifdtreeR, use.edge.length=F)
 
-#making a tree with only Bay Area strains (i.e., not worldwide strains)
-BayAreanifdtree<-drop.tip(nifdtreeR, c('nifd_03'))
-plot.phylo(BayAreanifdtree, use.edge.length=F)
+# #making a tree with only Bay Area strains (i.e., not worldwide strains)
+# BayAreanifdtree<-drop.tip(nifdtreeR, c('nifd_03'))
+# plot.phylo(BayAreanifdtree, use.edge.length=F)
 
 #not relevent because all strains had brady japonicum
 # #making a tree with only Brady japonicum strains
@@ -45,14 +45,14 @@ nifdInteractionMatrix <- nifdNodules%>%
   mutate(interaction=1)%>%
   spread(key=nifd_contig_95sim, value=interaction, fill=0)
 
-#subset out only Bay Area strains
-nifdBayAreaInteractionMatrix <- nifdInteractionMatrix%>%
-  filter(plant_species!='Ulex europaeus - Australia', plant_species!='Spartium junceum - Italy', plant_species!='Ulex europaeus - Portugul')%>%
-  #get summary interaction matrix (sum of interactions by species)
-  gather(key=nifd_contig_95sim, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
-  group_by(plant_status, plant_species, nifd_contig_95sim)%>%
-  summarise(interaction=sum(interaction))%>%
-  spread(key=nifd_contig_95sim, value=interaction)
+# #subset out only Bay Area strains
+# nifdBayAreaInteractionMatrix <- nifdInteractionMatrix%>%
+#   filter(plant_species!='Ulex europaeus - Australia', plant_species!='Spartium junceum - Italy', plant_species!='Ulex europaeus - Portugul')%>%
+#   #get summary interaction matrix (sum of interactions by species)
+#   gather(key=nifd_contig_95sim, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
+#   group_by(plant_status, plant_species, nifd_contig_95sim)%>%
+#   summarise(interaction=sum(interaction))%>%
+#   spread(key=nifd_contig_95sim, value=interaction)
 
 # #not relevent, because all non-brady japonicum strains grouped with a strain that was a bj
 # #subset out only brady japonicum strains
