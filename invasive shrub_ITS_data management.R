@@ -32,7 +32,7 @@ plot.phylo(ITStreeR, use.edge.length=F)
 # plot.phylo(BjITStree, use.edge.length=F)
 
 #making a tree with only Brady japonicum strains from the Bay Area
-BjBayAreaITStree<-drop.tip(ITStreeR, c('U115', 'UU22sfb', 'ITS_K01a', 'IITS_V01s', 'ITS_W01a', 'ITS_W01n', 'ITS_X01z', 'ITS_E01h'))
+BjBayAreaITStree<-drop.tip(ITStreeR, c('U115', 'UU22sfb', 'ITS_K01a', 'ITS_V01s', 'ITS_W01a', 'ITS_W01n', 'ITS_X01z', 'ITS_E01h'))
 plot.phylo(BjBayAreaITStree, use.edge.length=F)
 
 
@@ -41,7 +41,9 @@ plot.phylo(BjBayAreaITStree, use.edge.length=F)
 #####################
 #read in nodule data
 ITSnodules <- read.csv('strain data\\La Pierre_invasion molecular manuscript_strain information_092515.csv')%>%
-  select(plant_species, plant_status, nodule_ID, ITS_contig_97sim)
+  select(plant_species, plant_status, nodule_ID, ITS_contig_97sim)%>%
+  #remove strains not in tree
+  filter(ITS_contig_97sim!='ITS_23_5N', ITS_contig_97sim!='ITS_29_2N')
   
 #create an interaction matrix of strains for each plant species
 ITSinteractionMatrix <- ITSnodules%>%
