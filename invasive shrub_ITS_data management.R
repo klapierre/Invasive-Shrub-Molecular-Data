@@ -43,7 +43,7 @@ plot.phylo(BjBayAreaITStree, use.edge.length=F)
 ITSnodules <- read.csv('strain data\\La Pierre_invasion molecular manuscript_strain information_092515.csv')%>%
   select(plant_species, plant_status, nodule_ID, ITS_contig_97sim)%>%
   #remove strains not in tree
-  filter(ITS_contig_97sim!='ITS_23_5N', ITS_contig_97sim!='ITS_29_2N')
+  filter(ITS_contig_97sim!='ITS_23_5N      ', ITS_contig_97sim!='ITS_29_2N')
   
 #create an interaction matrix of strains for each plant species
 ITSinteractionMatrix <- ITSnodules%>%
