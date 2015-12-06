@@ -156,7 +156,7 @@ chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.ch
   scale_y_continuous(breaks=seq(0, 12, 2), name="Chao Richness Estimate") +
   coord_cartesian(ylim=c(0, 12)) +
   xlab("Plant Status") +
-  scale_fill_manual(values=c("#009900", "#FF9900")) +
+  scale_fill_manual(values=c("#FF9900", "#009900")) +
   theme(legend.position="none")
 
 
