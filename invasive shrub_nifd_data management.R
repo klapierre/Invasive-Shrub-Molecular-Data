@@ -41,12 +41,13 @@ nifdNodules <- read.csv('strain data\\La Pierre_invasion molecular manuscript_st
 #create an interaction matrix of strains for each plant species
 nifdInteractionMatrix <- nifdNodules%>%
   select(plant_species, plant_status, nodule_ID, nifd_contig_95sim)%>%
-  filter(nifd_contig_95sim!='')%>%
+  filter(nifd_contig_95sim!='', nifd_contig_95sim!='1_4N')%>%
   mutate(interaction=1)%>%
   spread(key=nifd_contig_95sim, value=interaction, fill=0)
 
 # #subset out only Bay Area strains
 # nifdBayAreaInteractionMatrix <- nifdInteractionMatrix%>%
+#   select(-nifd_03)%>%
 #   filter(plant_species!='Ulex europaeus - Australia', plant_species!='Spartium junceum - Italy', plant_species!='Ulex europaeus - Portugul')%>%
 #   #get summary interaction matrix (sum of interactions by species)
 #   gather(key=nifd_contig_95sim, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
@@ -65,6 +66,7 @@ nifdInteractionMatrix <- nifdNodules%>%
 
 #subset out only Bay Area and brady japonicum strains
 nifdBjBayAreaInteractionMatrix <- nifdInteractionMatrix%>%
+  select(-nifd_03)%>%
   filter(plant_species!='Ulex europaeus - Australia', plant_species!='Spartium junceum - Italy', plant_species!='Ulex europaeus - Portugul')%>%
   #get summary interaction matrix (sum of interactions by species)
   gather(key=ITS_contig_97sim, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
