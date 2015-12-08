@@ -6,6 +6,7 @@ library(grid)
 library(vegan)
 library(tidyr)
 library(dplyr)
+library(bipartite)
 
 setwd('C:\\Users\\Kim\\Dropbox\\bigcb\\invasive shrubs project\\DNA work\\molecular data analysis')
 
@@ -171,5 +172,38 @@ pushViewport(viewport(layout=grid.layout(1,3)))
 print(chaoPlot, vp=viewport(layout.pos.row=1, layout.pos.col=1))
 print(PDplot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
 print(NRIplot, vp=viewport(layout.pos.row=1, layout.pos.col=3))
+
+
+
+
+
+###network analysis - determine specialization and generalization
+matrix <- (nifdBjBayAreaInteractionMatrix[,2:47])
+rownames(matrix) <- matrix$plant_species
+matrix <-  matrix%>%
+  select(-plant_species)
+
+visweb(t(matrix))
+PDI_NifD <- as.data.frame(PDI(t(matrix)))%>%
+  add_rownames('plant')%>%
+  mutate(plant_status=ifelse(plant=='Genista monspessulana', 'invasive', ifelse(plant=='Spartium junceum', 'invasive', ifelse(plant=='Ulex europaeus', 'invasive', ifelse(plant=='Acmispon glaber', 'invasive', 'native')))))
+
+t.test(PDI(t(matrix))~plant_status, PDI_NifD, var.equal=T) #SR different, t=-1.228, p=0.2654, df=6
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
