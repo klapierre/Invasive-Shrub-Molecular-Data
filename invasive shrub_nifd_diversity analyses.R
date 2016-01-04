@@ -191,7 +191,19 @@ PDI_NifD <- as.data.frame(PDI(t(matrix)))%>%
 t.test(PDI(t(matrix))~plant_status, PDI_NifD, var.equal=T) #SR different, t=-1.228, p=0.2654, df=6
 
 
+#network test from both directions
+networkIndices <- specieslevel(t(matrix))
 
+#plot the interaction web
+
+plantcolors<-c("#00990099", "#00990099", "#00990099","#00990099", "#FF990099", "#FF990099", "#FF990099",  "#FF990099", "#FF990099")
+straincolors<-c(rep("black"))
+
+
+plotweb(t(matrix), bor.col.interaction=plantcolors,  col.interaction=plantcolors, arrow="no", method="normal", labsize=1.5,
+        text.rot=90, low.lab.dis=NULL,
+        y.width.high=0.005,y.width.low=0.005, col.low="black", col.high="black", 
+        bor.col.high="black", bor.col.low="black")
 
 
 
