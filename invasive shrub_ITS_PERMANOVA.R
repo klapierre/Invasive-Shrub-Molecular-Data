@@ -36,15 +36,21 @@ barGraphStats <- function(data, variable, byFactorNames) {
 }  
 
 #import MDS data
-itsMDS <- read.csv('PERMANOVA\\La Pierre_invasion molecular manuscript_ITS_bj only_MDS results.csv')
+itsMDS <- read.csv('PERMANOVA\\La Pierre_invasion molecular manuscript_ITS_MDS results.csv')
 
 #figure
-ggplot(data=itsMDS, aes(x=MDS_1, y=MDS_2, colour=plant_status)) +
+itsPlot <- ggplot(data=itsMDS, aes(x=MDS_1, y=MDS_2, colour=plant_status)) +
   geom_point(shape=19, size=10) +
   geom_text(aes(label=plant_code), hjust=0, vjust=0, colour='black', size=10) +
   scale_color_manual(values=c("#FF9900", "#009900")) +
-  xlab('MDS 1') + ylab('MDS 2')
+  xlab('MDS 1') + ylab('MDS 2') +
+  theme(legend.position=c(0.85,0.9)) +
+  annotate('text', x=-1.25, y=1.2, label='(a) ITS', size=12, hjust=0)
 
+#putting ITS and nifD MDS plots together
+pushViewport(viewport(layout=grid.layout(1,2)))
+print(itsPlot, vp=viewport(layout.pos.row=1, layout.pos.col=1))
+print(nifdPlot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
 
 
 
