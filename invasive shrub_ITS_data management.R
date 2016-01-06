@@ -33,54 +33,54 @@ plot.phylo(ITStreeR, use.edge.length=F)
 
 #making a tree with only Brady japonicum strains from the Bay Area
 BjBayAreaITStree<-drop.tip(ITStreeR, c('U115', 'UU22sfb', 'ITS_K01a', 'ITS_V01s', 'ITS_W01a', 'ITS_W01n', 'ITS_X01z', 'ITS_E01h'))
-# plot.phylo(BjBayAreaITStree, use.edge.length=F)
+plot.phylo(BjBayAreaITStree, use.edge.length=F)
 
 
 #####################
 # strain data management
 #####################
 #read in nodule data
-ITSnodules <- read.csv('strain data\\La Pierre_invasion molecular manuscript_strain information_092515.csv')%>%
-  select(plant_species, plant_status, nodule_ID, ITS_contig_97sim)%>%
+ITSnodules <- read.csv('strain data\\La Pierre_invasion molecular manuscript_strain information_01032016.csv')%>%
+  select(plant_species, plant_status, nodule_ID, ITS_OTU) #%>%
   #remove strains not in tree
-  filter(ITS_contig_97sim!='ITS_23_5N      ', ITS_contig_97sim!='ITS_29_2N')
+  # filter(ITS_OTU!='ITS_23_5N      ', ITS_OTU!='ITS_29_2N')
   
 #create an interaction matrix of strains for each plant species
 ITSinteractionMatrix <- ITSnodules%>%
-  select(plant_species, plant_status, nodule_ID, ITS_contig_97sim)%>%
-  filter(ITS_contig_97sim!='')%>%
+  select(plant_species, plant_status, nodule_ID, ITS_OTU)%>%
+  filter(ITS_OTU!='')%>%
   mutate(interaction=1)%>%
-  spread(key=ITS_contig_97sim, value=interaction, fill=0)
+  spread(key=ITS_OTU, value=interaction, fill=0)
   
 # #subset out only Bay Area strains
 # ITSBayAreaInteractionMatrix <- ITSinteractionMatrix%>%
 #   filter(plant_species!='Ulex europaeus - Australia', plant_species!='Spartium junceum - Italy', plant_species!='Ulex europaeus - Portugul')%>%
 #   select(-U115, -UU22sfb)%>%
 #   #get summary interaction matrix (sum of interactions by species)
-#   gather(key=ITS_contig_97sim, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
-#   group_by(plant_status, plant_species, ITS_contig_97sim)%>%
+#   gather(key=ITS_OTU, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
+#   group_by(plant_status, plant_species, ITS_OTU)%>%
 #   summarise(interaction=sum(interaction))%>%
-#   spread(key=ITS_contig_97sim, value=interaction)
+#   spread(key=ITS_OTU, value=interaction)
 #   
 # #subset out only brady japonicum strains
 # ITSbjInteractionMatrix <- ITSinteractionMatrix%>%
 #   select(-ITS_K01a, -ITS_V01s, -ITS_W01a, -ITS_W01n, -ITS_X01z, -ITS_E01h)%>%
 #   filter(nodule_ID!='K01a', nodule_ID!='V01s', nodule_ID!='W01a', nodule_ID!='W01n', nodule_ID!='ITS_X01z', nodule_ID!='E01h')%>%
 #   #get summary interaction matrix (sum of interactions by species)
-#   gather(key=ITS_contig_97sim, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
-#   group_by(plant_status, plant_species, ITS_contig_97sim)%>%
+#   gather(key=ITS_OTU, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
+#   group_by(plant_status, plant_species, ITS_OTU)%>%
 #   summarise(interaction=sum(interaction))%>%
-#   spread(key=ITS_contig_97sim, value=interaction)
+#   spread(key=ITS_OTU, value=interaction)
 
 #subset out only Bay Area and brady japonicum strains
 ITSbjBayAreaInteractionMatrix <- ITSinteractionMatrix%>%
-  select(-ITS_K01a, -ITS_V01s, -ITS_W01a, -ITS_W01n, -ITS_X01z, -ITS_E01h, -U115, -UU22sfb)%>%
+  select(-ITS_038, -ITS_039, -ITS_040, -ITS_041, -ITS_042, -ITS_043, -ITS_044, -ITS_019, ITS_027, ITS_014)%>%
   filter(nodule_ID!='K01a', nodule_ID!='V01s', nodule_ID!='W01a', nodule_ID!='W01n', nodule_ID!='ITS_X01z', nodule_ID!='E01h', plant_species!='Ulex europaeus - Australia', plant_species!='Spartium junceum - Italy', plant_species!='Ulex europaeus - Portugul')%>%
   #get summary interaction matrix (sum of interactions by species)
-  gather(key=ITS_contig_97sim, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
-  group_by(plant_status, plant_species, ITS_contig_97sim)%>%
+  gather(key=ITS_OTU, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
+  group_by(plant_status, plant_species, ITS_OTU)%>%
   summarise(interaction=sum(interaction))%>%
-  spread(key=ITS_contig_97sim, value=interaction)
+  spread(key=ITS_OTU, value=interaction)
 
 
 
