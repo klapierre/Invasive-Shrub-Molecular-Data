@@ -47,20 +47,20 @@ plot.phylo(BjBayAreanifdtree, use.edge.length=F)
 
 nifdBjBayAreaInteractionMatrix <- nifdBjBayAreaInteractionMatrix%>%
   #create a column combining status and species
-  mutate(plant_code=ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Acmispon glaber', 'ACGL', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Acmispon micranthus', 'ACMI', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', ifelse(plant_species=='Spartium junceum', 'SPJU', 'ULEU')))))))), type=as.character(paste(plant_code, plant_status, sep='_')))
+  mutate(plant_code=ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Acmispon glaber', 'ACGL', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Acmispon micranthus', 'ACMI', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', ifelse(plant_species=='Spartium junceum', 'SPJU', ifelse(plant_species=='Lupinus arboreous', 'LUAR', 'ULEU'))))))))), type=as.character(paste(plant_code, plant_status, sep='_')))
 
 
 #calculate diversity metrics
-PD <- pd(nifdBjBayAreaInteractionMatrix[,c(-1:-2, -48:-49)], BjBayAreanifdtree, include.root=F) #phylogenetic diversity
+PD <- pd(nifdBjBayAreaInteractionMatrix[,c(-1:-2, -28:-29)], BjBayAreanifdtree, include.root=F) #phylogenetic diversity
 
-MPD <- mpd(nifdBjBayAreaInteractionMatrix[,c(-1:-2, -48:-49)], cophenetic(BjBayAreanifdtree)) #mean pairwise distance
+MPD <- mpd(nifdBjBayAreaInteractionMatrix[,c(-1:-2, -28:-29)], cophenetic(BjBayAreanifdtree)) #mean pairwise distance
 
 phydist <- cophenetic(BjBayAreanifdtree) #matrix of phylogenetic distances among all pairs
 
-ses.mpd <- ses.mpd(nifdBjBayAreaInteractionMatrix[,c(-1:-2, -48:-49)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100)%>%
+ses.mpd <- ses.mpd(nifdBjBayAreaInteractionMatrix[,c(-1:-2, -28:-29)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100)%>%
   select(-runs, -ntaxa) #net relatedness index
 
-ses.mntd <- ses.mntd(nifdBjBayAreaInteractionMatrix[,c(-1:-2, -48:-49)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100) #nearest taxon index
+ses.mntd <- ses.mntd(nifdBjBayAreaInteractionMatrix[,c(-1:-2, -28:-29)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100) #nearest taxon index
 
 #combine diversity metrics into one dataset
 diversity <- cbind(PD, MPD, ses.mpd, ses.mntd)%>%
@@ -138,33 +138,31 @@ print(NTIplot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
 
 
 ###Chao richness estimates
-plantStrainRichness <- specnumber(nifdBjBayAreaInteractionMatrix[,3:47]) #gives strain richness for each plant species based on abundance data
+plantStrainRichness <- specnumber(nifdBjBayAreaInteractionMatrix[,3:27]) #gives strain richness for each plant species based on abundance data
 
-totalStrainPool <- specpool(nifdBjBayAreaInteractionMatrix[,3:47]) #estimate total strain pool across all plant species
+totalStrainPool <- specpool(nifdBjBayAreaInteractionMatrix[,3:27]) #estimate total strain pool across all plant species
 
-speciesStrainRichness <- data.frame(estimateR(nifdBjBayAreaInteractionMatrix[,3:47])) #estimates Chao strain richness for each plant species 
+speciesStrainRichness <- data.frame(estimateR(nifdBjBayAreaInteractionMatrix[,3:27])) #estimates Chao strain richness for each plant species 
 
 speciesStrainRichness <- cbind(row_names=rownames(speciesStrainRichness), speciesStrainRichness)%>%
   gather(key=type, value=estimate, -row_names)%>%
   filter(type!='row_names')%>%
-  mutate(plant_species=ifelse(type=='X1', 'Genista monspessulana', ifelse(type=='X2', 'Spartium junceum', ifelse(type=='X3', 'Ulex europaeus', ifelse(type=='X4', 'Acmispon glaber', ifelse(type=='X5', 'Acmispon heermannii', ifelse(type=='X6', 'Acmispon micranthus', ifelse(type=='X7', 'Acmispon strigosus', 'Lupinus bicolor'))))))))%>%
+  mutate(plant_species=ifelse(type=='X1', 'Genista monspessulana', ifelse(type=='X2', 'Spartium junceum', ifelse(type=='X3', 'Ulex europaeus', ifelse(type=='X4', 'Acmispon glaber', ifelse(type=='X5', 'Acmispon heermannii', ifelse(type=='X6', 'Acmispon micranthus', ifelse(type=='X7', 'Acmispon strigosus', ifelse(type=='X8', 'Lupinus arboreous', 'Lupinus bicolor')))))))))%>%
   spread(key=row_names, value=estimate)%>%
   mutate(plant_status=ifelse(plant_species=='Genista monspessulana', 'invasive', ifelse(plant_species=='Spartium junceum', 'invasive', ifelse(plant_species=='Ulex europaeus', 'invasive', 'native'))))
   
 ###ttest for Chao richness
-t.test(S.chao1~plant_status, speciesStrainRichness, var.equal=T) #Chao richness estimate not different, t=9.6303, p=7.177e-05, df=7
+t.test(S.chao1~plant_status, speciesStrainRichness, var.equal=T) #Chao richness estimate not different, t=1.3327, p=0.2244, df=7
 
 chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.chao1", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
   geom_bar(stat="identity") +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0, 30, 2), name="Chao Richness Estimate") +
-  coord_cartesian(ylim=c(0, 30)) +
+  scale_y_continuous(breaks=seq(0, 12, 2), name="Chao Richness Estimate") +
+  coord_cartesian(ylim=c(0, 12)) +
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
-  theme(legend.position="none") +
-  annotate('text', x=1, y=8, label='a', size=10) +
-  annotate('text', x=2, y=29, label='b', size=10)
+  theme(legend.position="none")
 
 
 #figure of Chao richness, PD, and NRI
@@ -177,33 +175,33 @@ print(NRIplot, vp=viewport(layout.pos.row=1, layout.pos.col=3))
 
 
 
-###network analysis - determine specialization and generalization
-matrix <- (nifdBjBayAreaInteractionMatrix[,2:47])
-rownames(matrix) <- matrix$plant_species
-matrix <-  matrix%>%
-  select(-plant_species)
-
-visweb(t(matrix))
-PDI_NifD <- as.data.frame(PDI(t(matrix)))%>%
-  add_rownames('plant')%>%
-  mutate(plant_status=ifelse(plant=='Genista monspessulana', 'invasive', ifelse(plant=='Spartium junceum', 'invasive', ifelse(plant=='Ulex europaeus', 'invasive', ifelse(plant=='Acmispon glaber', 'invasive', 'native')))))
-
-t.test(PDI(t(matrix))~plant_status, PDI_NifD, var.equal=T) #SR different, t=-1.228, p=0.2654, df=6
-
-
-#network test from both directions
-networkIndices <- specieslevel(t(matrix))
-
-#plot the interaction web
-
-plantcolors<-c("#00990099", "#00990099", "#00990099","#00990099", "#FF990099", "#FF990099", "#FF990099",  "#FF990099", "#FF990099")
-straincolors<-c(rep("black"))
-
-
-plotweb(t(matrix), bor.col.interaction=plantcolors,  col.interaction=plantcolors, arrow="no", method="normal", labsize=1.5,
-        text.rot=90, low.lab.dis=NULL,
-        y.width.high=0.005,y.width.low=0.005, col.low="black", col.high="black", 
-        bor.col.high="black", bor.col.low="black")
+# ###network analysis - determine specialization and generalization
+# matrix <- (nifdBjBayAreaInteractionMatrix[,2:47])
+# rownames(matrix) <- matrix$plant_species
+# matrix <-  matrix%>%
+#   select(-plant_species)
+# 
+# visweb(t(matrix))
+# PDI_NifD <- as.data.frame(PDI(t(matrix)))%>%
+#   add_rownames('plant')%>%
+#   mutate(plant_status=ifelse(plant=='Genista monspessulana', 'invasive', ifelse(plant=='Spartium junceum', 'invasive', ifelse(plant=='Ulex europaeus', 'invasive', ifelse(plant=='Acmispon glaber', 'invasive', 'native')))))
+# 
+# t.test(PDI(t(matrix))~plant_status, PDI_NifD, var.equal=T) #SR different, t=-1.228, p=0.2654, df=6
+# 
+# 
+# #network test from both directions
+# networkIndices <- specieslevel(t(matrix))
+# 
+# #plot the interaction web
+# 
+# plantcolors<-c("#00990099", "#00990099", "#00990099","#00990099", "#FF990099", "#FF990099", "#FF990099",  "#FF990099", "#FF990099")
+# straincolors<-c(rep("black"))
+# 
+# 
+# plotweb(t(matrix), bor.col.interaction=plantcolors,  col.interaction=plantcolors, arrow="no", method="normal", labsize=1.5,
+#         text.rot=90, low.lab.dis=NULL,
+#         y.width.high=0.005,y.width.low=0.005, col.low="black", col.high="black", 
+#         bor.col.high="black", bor.col.low="black")
 
 
 
