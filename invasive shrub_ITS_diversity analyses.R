@@ -137,7 +137,7 @@ plantStrainRichness <- specnumber(ITSbjBayAreaInteractionMatrix[,3:40]) #gives s
 
 totalStrainPool <- specpool(ITSbjBayAreaInteractionMatrix[,3:40]) #estimate total strain pool across all plant species
 
-speciesStrainRichness <- data.frame(estimateR(ITSbjBayAreaInteractionMatrix[,3:40])) #estimates Chao strain richness for each plant species 
+speciesStrainRichness <- data.frame(estimateR(ITSbjBayAreaInteractionMatrix[,3:40])) #estimates Chao strain richness for each plant species
 
 speciesStrainRichness <- cbind(row_names=rownames(speciesStrainRichness), speciesStrainRichness)%>%
   gather(key=type, value=estimate, -row_names)%>%
