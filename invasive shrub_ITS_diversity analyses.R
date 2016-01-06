@@ -147,7 +147,7 @@ speciesStrainRichness <- cbind(row_names=rownames(speciesStrainRichness), specie
   mutate(plant_status=ifelse(plant_species=='Acmispon angustissimus', 'invasive', ifelse(plant_species=='Genista monspessulana', 'invasive', ifelse(plant_species=='Spartium junceum', 'invasive', ifelse(plant_species=='Ulex europaeus', 'invasive', 'native')))))
   
 ###ttest for Chao richness
-t.test(S.chao1~plant_status, speciesStrainRichness, var.equal=T) #Chao richness estimate not different, t=0.67012, p=0.5216, df=7
+t.test(S.chao1~plant_status, speciesStrainRichness, var.equal=T) #Chao richness estimate not different, t=0.67012, p=0.5216, df=8
 
 chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.chao1", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
   geom_bar(stat="identity") +
