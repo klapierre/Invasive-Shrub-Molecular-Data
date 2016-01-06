@@ -48,7 +48,7 @@ ITSbjBayAreaInteractionMatrix <- ITSbjBayAreaInteractionMatrix%>%
   #create a column combining status and species
   mutate(plant_code=ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Acmispon glaber', 'ACGL', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Acmispon micranthus', 'ACMI', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', ifelse(plant_species=='Spartium junceum', 'SPJU', 'ULEU')))))))), type=as.character(paste(plant_code, plant_status, sep='_')))
 
-
+#this needs the fixed tree with new OTU names in it
 #calculate diversity metrics
 PD <- pd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -27:-28)], BjBayAreaITStree) #phylogenetic diversity
 
@@ -133,28 +133,28 @@ print(NTIplot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
 
 
 ###Chao richness estimates
-plantStrainRichness <- specnumber(ITSbjBayAreaInteractionMatrix[,3:26]) #gives strain richness for each plant species based on abundance data
+plantStrainRichness <- specnumber(ITSbjBayAreaInteractionMatrix[,3:40]) #gives strain richness for each plant species based on abundance data
 
-totalStrainPool <- specpool(ITSbjBayAreaInteractionMatrix[,3:26]) #estimate total strain pool across all plant species
+totalStrainPool <- specpool(ITSbjBayAreaInteractionMatrix[,3:40]) #estimate total strain pool across all plant species
 
-speciesStrainRichness <- data.frame(estimateR(ITSbjBayAreaInteractionMatrix[,3:26])) #estimates Chao strain richness for each plant species 
+speciesStrainRichness <- data.frame(estimateR(ITSbjBayAreaInteractionMatrix[,3:40])) #estimates Chao strain richness for each plant species 
 
 speciesStrainRichness <- cbind(row_names=rownames(speciesStrainRichness), speciesStrainRichness)%>%
   gather(key=type, value=estimate, -row_names)%>%
   filter(type!='row_names')%>%
-  mutate(plant_species=ifelse(type=='X1', 'Acmispon angustissimus', ifelse(type=='X2', 'Genista monspessulana', ifelse(type=='X3', 'Spartium junceum', ifelse(type=='X4', 'Ulex europaeus', ifelse(type=='X5', 'Acmispon glaber', ifelse(type=='X6', 'Acmispon heermannii', ifelse(type=='X7', 'Acmispon micranthus', ifelse(type=='X8', 'Acmispon strigosus', 'Lupinus bicolor')))))))))%>%
+  mutate(plant_species=ifelse(type=='X1', 'Acmispon angustissimus', ifelse(type=='X2', 'Genista monspessulana', ifelse(type=='X3', 'Spartium junceum', ifelse(type=='X4', 'Ulex europaeus', ifelse(type=='X5', 'Acmispon glaber', ifelse(type=='X6', 'Acmispon heermannii', ifelse(type=='X7', 'Acmispon micranthus', ifelse(type=='X8', 'Acmispon strigosus', ifelse(type=='X9', 'Lupinus arboreous', 'Lupinus bicolor'))))))))))%>%
   spread(key=row_names, value=estimate)%>%
   mutate(plant_status=ifelse(plant_species=='Acmispon angustissimus', 'invasive', ifelse(plant_species=='Genista monspessulana', 'invasive', ifelse(plant_species=='Spartium junceum', 'invasive', ifelse(plant_species=='Ulex europaeus', 'invasive', 'native')))))
   
 ###ttest for Chao richness
-t.test(S.chao1~plant_status, speciesStrainRichness, var.equal=T) #Chao richness estimate not different, t=-0.19217, p=0.8531, df=7
+t.test(S.chao1~plant_status, speciesStrainRichness, var.equal=T) #Chao richness estimate not different, t=0.67012, p=0.5216, df=7
 
 chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.chao1", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
   geom_bar(stat="identity") +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0, 12, 2), name="Chao Richness Estimate") +
-  coord_cartesian(ylim=c(0, 12)) +
+  scale_y_continuous(breaks=seq(0, 25, 5), name="Chao Richness Estimate") +
+  coord_cartesian(ylim=c(0, 25)) +
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
   theme(legend.position="none")
