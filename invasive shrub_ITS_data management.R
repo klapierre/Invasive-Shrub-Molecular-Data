@@ -11,7 +11,7 @@ setwd('C:\\Users\\Kim\\Dropbox\\bigcb\\invasive shrubs project\\DNA work\\molecu
 #####################
 
 #mr bayes tree: 2 million runs, including native, invasive, and worldwide invasive species
-ITStreeNexus<-read.nexus(file='ITS data\\MrBayes tree\\2 mil runs\\La Pierre_invasive shrub_ITS_consensus sequences_97similarity.nexus.con.tre')
+ITStreeNexus<-read.nexus(file='ITS data\\MrBayes tree_102015\\2 mil runs\\La Pierre_invasive shrub_ITS_consensus sequences_97similarity.nexus.con.tre')
 
 #makes tree into a .phylo file instead of .newick or .tre
 ITStree<-as.phylo(ITStreeNexus) 
@@ -33,7 +33,7 @@ plot.phylo(ITStreeR, use.edge.length=F)
 
 #making a tree with only Brady japonicum strains from the Bay Area
 BjBayAreaITStree<-drop.tip(ITStreeR, c('U115', 'UU22sfb', 'ITS_K01a', 'ITS_V01s', 'ITS_W01a', 'ITS_W01n', 'ITS_X01z', 'ITS_E01h'))
-plot.phylo(BjBayAreaITStree, use.edge.length=F)
+# plot.phylo(BjBayAreaITStree, use.edge.length=F)
 
 
 #####################
