@@ -46,20 +46,20 @@ plot.phylo(BjBayAreaITStree, use.edge.length=F)
 
 ITSbjBayAreaInteractionMatrix <- ITSbjBayAreaInteractionMatrix%>%
   #create a column combining status and species
-  mutate(plant_code=ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Acmispon glaber', 'ACGL', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Acmispon micranthus', 'ACMI', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', ifelse(plant_species=='Spartium junceum', 'SPJU', 'ULEU')))))))), type=as.character(paste(plant_code, plant_status, sep='_')))
+  mutate(plant_code=ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Acmispon glaber', 'ACGL', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Acmispon micranthus', 'ACMI', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', ifelse(plant_species=='Spartium junceum', 'SPJU', ifelse(plant_species=='Lupinus arboreous', 'LUAR', 'ULEU'))))))))), type=as.character(paste(plant_code, plant_status, sep='_')))
 
 #this needs the fixed tree with new OTU names in it
 #calculate diversity metrics
-PD <- pd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -27:-28)], BjBayAreaITStree) #phylogenetic diversity
+PD <- pd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -41:-42)], BjBayAreaITStree) #phylogenetic diversity
 
-MPD <- mpd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -27:-28)], cophenetic(BjBayAreaITStree)) #mean pairwise distance
+MPD <- mpd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -41:-42)], cophenetic(BjBayAreaITStree)) #mean pairwise distance
 
 phydist <- cophenetic(BjBayAreaITStree) #matrix of phylogenetic distances among all pairs
 
-ses.mpd <- ses.mpd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -27:-28)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100)%>%
+ses.mpd <- ses.mpd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -41:-42)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100)%>%
   select(-runs, -ntaxa) #net relatedness index
 
-ses.mntd <- ses.mntd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -27:-28)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100) #nearest taxon index
+ses.mntd <- ses.mntd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -41:-42)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100) #nearest taxon index
 
 #combine diversity metrics into one dataset
 diversity <- cbind(PD, MPD, ses.mpd, ses.mntd)%>%
