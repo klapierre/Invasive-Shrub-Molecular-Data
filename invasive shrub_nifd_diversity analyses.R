@@ -42,7 +42,7 @@ barGraphStats <- function(data, variable, byFactorNames) {
 source('Invasive Shrub Molecular Data Analysis\\Invasive-Shrub-Molecular-Data\\invasive shrub_nifd_data management.R')
 
 #drop reference strains from tree
-BjBayAreanifdtree<-drop.tip(BjBayAreanifdtree, c('USDA_38_japonicum', 'USDA_3622_liaoningense', 'USDA_94_elkanii', 'M76_sinorhizobium', 'NZP514_rhizobium'))
+BjBayAreanifdtree<-drop.tip(BjBayAreanifdtree, c('Mesorhizobium_ciceri_USDA3383_nifd_GQ167280', 'B_yuanmingense_LMG21827_nifd_KF532381_1', 'B_liaoningense_USDA3622_nifd_KF532380_1', 'B_elkanii_USDA76_nifd_KF532341_1', 'B_canariense_BTA1_nifd_DQ644553_1', 'Rhizobium_leguminosarum_X01z_nifd'))
 plot.phylo(BjBayAreanifdtree, use.edge.length=F)
 
 nifdBjBayAreaInteractionMatrix <- nifdBjBayAreaInteractionMatrix%>%
@@ -76,34 +76,36 @@ names(diversity)[names(diversity)=='nifdBjBayAreaInteractionMatrix$plant_species
 
 
 ###student's ttest (assumes equal variances)
-t.test(SR~plant_status, diversity, var.equal=T) #SR different, t=5.5979, p=0.001383, df=6
-t.test(PD~plant_status, diversity, var.equal=T) #PD different, t=3.1932, p=0.01876, df=6
-t.test(MPD~plant_status, diversity, var.equal=T) #MPD not different, t=0.76807, p=0.4716, df=6
-t.test(NRI~plant_status, diversity, var.equal=T) #NRI different, t=-2.5108, p=0.04585, df=6
-t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=-1.7147, p=0.1372, df=6
+t.test(SR~plant_status, diversity, var.equal=T) #SR not different, t=1.7638, p=0.1211, df=7
+t.test(PD~plant_status, diversity, var.equal=T) #PD different, t=4.5539, p=0.002624, df=7
+t.test(MPD~plant_status, diversity, var.equal=T) #MPD different, t=4.201, p=0.004031, df=7
+t.test(NRI~plant_status, diversity, var.equal=T) #NRI not different, t=0.95291, p=0.3724, df=7
+t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=-1.6707, p=0.1387, df=7
 
 #PD and MPD
 PDplot<-ggplot(data=barGraphStats(data=diversity, variable="PD", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
   geom_bar(stat="identity") +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
-  scale_y_continuous(breaks=seq(0, 0.25, 0.05), name="PD") +
+  scale_y_continuous(breaks=seq(0, 0.25, 0.05), name="Phylogenetic Diversity") +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  coord_cartesian(ylim=c(0, 0.25)) +
+  coord_cartesian(ylim=c(0, 0.27)) +
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
   theme(legend.position="none") +
   annotate('text', x=1, y=0.11, label='a', size=10) +
-  annotate('text', x=2, y=0.23, label='b', size=10)
+  annotate('text', x=2, y=0.26, label='b', size=10)
 
 MPDplot<-ggplot(data=barGraphStats(data=diversity, variable="MPD", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
   geom_bar(stat="identity") +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
-  scale_y_continuous(breaks=seq(0, 0.05, 0.01), name="MPD") +
+  scale_y_continuous(breaks=seq(0, 0.07, 0.01), name="Mean Pairwise Distance") +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  coord_cartesian(ylim=c(0, 0.05)) +
+  coord_cartesian(ylim=c(0, 0.07)) +
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
-  theme(legend.position="none")
+  theme(legend.position="none") +
+  annotate('text', x=1, y=0.045, label='a', size=10) +
+  annotate('text', x=2, y=0.069, label='b', size=10)
 
 pushViewport(viewport(layout=grid.layout(1,2))) 
 print(PDplot, vp=viewport(layout.pos.row=1, layout.pos.col=1))
@@ -114,19 +116,17 @@ NRIplot<-ggplot(data=barGraphStats(data=diversity, variable="NRI", byFactorNames
   geom_bar(stat="identity") +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0, 1.6, 0.2), name="NRI") +
-  coord_cartesian(ylim=c(0, 1.6)) +
+  scale_y_continuous(breaks=seq(0, 1.3, 0.2), name="Net Relatedness Index") +
+  coord_cartesian(ylim=c(0, 1.3)) +
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
-  theme(legend.position="none") +
-  annotate('text', x=1, y=1.55, label='a', size=10) +
-  annotate('text', x=2, y=0.75, label='b', size=10)
+  theme(legend.position="none")
 
 NTIplot<-ggplot(data=barGraphStats(data=diversity, variable="NTI", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
   geom_bar(stat="identity") +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0, 1.2, 0.2), name="NTI") +
+  scale_y_continuous(breaks=seq(0, 1.2, 0.2), name="Nearest Taxon Index") +
   coord_cartesian(ylim=c(0, 1.2)) +
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
