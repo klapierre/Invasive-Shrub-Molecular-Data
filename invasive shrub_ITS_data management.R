@@ -34,7 +34,7 @@ plot.phylo(BjITStree, use.edge.length=F)
 
 
 #making a tree with only Brady japonicum strains from the Bay Area
-BjBayAreaITStree<-drop.tip(BjITStree, c('ITS_011', 'IITS_021', 'ITS_027')) 
+BjBayAreaITStree<-drop.tip(BjITStree, c('ITS_011', 'ITS_021', 'ITS_027')) 
 plot.phylo(BjBayAreaITStree, use.edge.length=F)
 
 
