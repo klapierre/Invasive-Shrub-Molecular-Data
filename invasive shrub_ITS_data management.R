@@ -57,7 +57,7 @@ ITSinteractionMatrix <- ITSnodules%>%
 #subset out only Bay Area and brady japonicum strains
 ITSbjBayAreaInteractionMatrix <- ITSinteractionMatrix%>%
   select(-ITS_032, -ITS_011, -ITS_021, -ITS_027)%>%
-  filter(nodule_ID!='ITS_X01z', plant_species!='Ulex europaeus - Australia', plant_species!='Spartium junceum - Italy', plant_species!='Ulex europaeus - Portugul')%>%
+  filter(nodule_ID!='X01z', plant_species!='Ulex europaeus - Australia', plant_species!='Spartium junceum - Italy', plant_species!='Ulex europaeus - Portugul')%>%
   #get summary interaction matrix (sum of interactions by species)
   gather(key=ITS_OTU_98, value=interaction, -plant_species, -plant_status, -nodule_ID)%>%
   group_by(plant_status, plant_species, ITS_OTU_98)%>%
