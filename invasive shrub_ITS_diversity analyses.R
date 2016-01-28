@@ -78,8 +78,8 @@ names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$plant_species'
 t.test(SR~plant_status, diversity, var.equal=T) #SR not different, t=2.2485, p=0.05933, df=7
 t.test(PD~plant_status, diversity, var.equal=T) #PD not different, t=0.1785, p=0.8634, df=7
 t.test(MPD~plant_status, diversity, var.equal=T) #MPD not different, t=-0.38019, p=0.7151, df=7
-t.test(NRI~plant_status, diversity, var.equal=T) #NRI not different, t=2.3011, p=0.0549, df=7
-t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=2.1166, p=0.07208, df=7
+t.test(NRI~plant_status, diversity, var.equal=T) #NRI not different, t=1.7542, p=0.1228, df=7
+t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=1.9712, p=0.08933, df=7
 
 #PD and MPD
 PDplot<-ggplot(data=barGraphStats(data=diversity, variable="PD", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
