@@ -76,11 +76,11 @@ names(diversity)[names(diversity)=='nifdBjBayAreaInteractionMatrix$plant_species
 
 
 ###student's ttest (assumes equal variances)
-t.test(SR~plant_status, diversity, var.equal=T) #SR not different, t=1.7638, p=0.1211, df=7
-t.test(PD~plant_status, diversity, var.equal=T) #PD different, t=4.5539, p=0.002624, df=7
-t.test(MPD~plant_status, diversity, var.equal=T) #MPD different, t=4.201, p=0.004031, df=7
-t.test(NRI~plant_status, diversity, var.equal=T) #NRI not different, t=0.95291, p=0.3724, df=7
-t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=-1.6707, p=0.1387, df=7
+t.test(SR~plant_status, diversity, var.equal=T) #SR not different, t=2.1049, p=0.07334, df=7
+t.test(PD~plant_status, diversity, var.equal=T) #PD different, t=4.7788, p=0.002015, df=7
+t.test(MPD~plant_status, diversity, var.equal=T) #MPD different, t=3.8197, p=0.006545, df=7
+t.test(NRI~plant_status, diversity, var.equal=T) #NRI not different, t=0.48605, p=0.6418, df=7
+t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=-0.82245, p=0.4379, df=7
 
 #PD and MPD
 PDplot<-ggplot(data=barGraphStats(data=diversity, variable="PD", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
@@ -152,7 +152,7 @@ speciesStrainRichness <- cbind(row_names=rownames(speciesStrainRichness), specie
   mutate(plant_status=ifelse(plant_species=='Genista monspessulana', 'invasive', ifelse(plant_species=='Spartium junceum', 'invasive', ifelse(plant_species=='Ulex europaeus', 'invasive', 'native'))))
   
 ###ttest for Chao richness
-t.test(S.chao1~plant_status, speciesStrainRichness, var.equal=T) #Chao richness estimate not different, t=1.3327, p=0.2244, df=7
+t.test(S.chao1~plant_status, speciesStrainRichness, var.equal=T) #Chao richness estimate not different, t=1.9709, p=0.08937, df=7
 
 chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.chao1", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
   geom_bar(stat="identity") +
@@ -162,7 +162,9 @@ chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.ch
   coord_cartesian(ylim=c(0, 12)) +
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
-  theme(legend.position="none")
+  theme(legend.position="none") +
+  annotate('text', x=1, y=7.5, label='a', size=10) +
+  annotate('text', x=2, y=12, label='b', size=10)
 
 
 #figure of Chao richness, PD, and NRI

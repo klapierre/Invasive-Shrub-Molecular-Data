@@ -32,12 +32,13 @@ plot.phylo(BjBayAreanifdtree, use.edge.length=F)
 #####################
 #read in nodule data
 nifdNodules <- read.csv('strain data\\La Pierre_invasion molecular manuscript_strain information_01252016.csv')%>%
-  select(plant_species, plant_status, nodule_ID, nifd_OTU_99)
+  select(plant_species, plant_status, nodule_ID, nifd_OTU_99, concatenated_OTU_98)
 
 #create an interaction matrix of strains for each plant species
 nifdInteractionMatrix <- nifdNodules%>%
-  select(plant_species, plant_status, nodule_ID, nifd_OTU_99)%>%
-  filter(nifd_OTU_99!='', nifd_OTU_99!='nifd_028')%>%
+  select(plant_species, plant_status, nodule_ID, nifd_OTU_99, concatenated_OTU_98)%>%
+  filter(nifd_OTU_99!='', nifd_OTU_99!='nifd_028', concatenated_OTU_98!='')%>%
+  select(-concatenated_OTU_98)%>%
   mutate(interaction=1)%>%
   spread(key=nifd_OTU_99, value=interaction, fill=0)
 
