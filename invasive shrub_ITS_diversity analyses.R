@@ -41,7 +41,7 @@ barGraphStats <- function(data, variable, byFactorNames) {
 source('Invasive Shrub Molecular Data Analysis\\Invasive-Shrub-Molecular-Data\\invasive shrub_ITS_data management.R')
 
 #drop reference strains from tree
-BjBayAreaITStree<-drop.tip(BjBayAreaITStree, c('USDA_38_japonicum', 'USDA_3622_liaoningense', 'USDA_94_elkanii', 'USDA_2370_rhizobium', 'USDA_194_sinorhizobium'))
+BjBayAreaITStree<-drop.tip(BjBayAreaITStree, c('Mesorhizobium_ciceri_USDA3383_ITS_AF345262_1', 'Rhizobium_leguminosarum_X01z_ITS', 'B_elkanii_USDA76_ITS_AF345254_1', 'B_yuanmingense_LMG21827_ITS_AY386734_1', 'B_canariense_BTA1_ITS_AY386708_1', 'B_liaoningense_USDA3622_ITS_AF345256_1'))
 plot.phylo(BjBayAreaITStree, use.edge.length=F)
 
 ITSbjBayAreaInteractionMatrix <- ITSbjBayAreaInteractionMatrix%>%
@@ -50,16 +50,16 @@ ITSbjBayAreaInteractionMatrix <- ITSbjBayAreaInteractionMatrix%>%
 
 #this needs the fixed tree with new OTU names in it
 #calculate diversity metrics
-PD <- pd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -41:-42)], BjBayAreaITStree) #phylogenetic diversity
+PD <- pd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], BjBayAreaITStree, include.root=F) #phylogenetic diversity
 
-MPD <- mpd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -41:-42)], cophenetic(BjBayAreaITStree)) #mean pairwise distance
+MPD <- mpd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], cophenetic(BjBayAreaITStree)) #mean pairwise distance
 
 phydist <- cophenetic(BjBayAreaITStree) #matrix of phylogenetic distances among all pairs
 
-ses.mpd <- ses.mpd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -41:-42)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100)%>%
+ses.mpd <- ses.mpd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100)%>%
   select(-runs, -ntaxa) #net relatedness index
 
-ses.mntd <- ses.mntd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -41:-42)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100) #nearest taxon index
+ses.mntd <- ses.mntd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100) #nearest taxon index
 
 #combine diversity metrics into one dataset
 diversity <- cbind(PD, MPD, ses.mpd, ses.mntd)%>%
@@ -75,19 +75,19 @@ names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$plant_species'
 
 
 ###student's ttest (assumes equal variances)
-t.test(SR~plant_status, diversity, var.equal=T) #SR not different, t=0.47276, p=0.6508, df=7
-t.test(PD~plant_status, diversity, var.equal=T) #PD not different, t=-0.84379, p=0.4267, df=7
-t.test(MPD~plant_status, diversity, var.equal=T) #MPD not different, t=-0.90728, p=0.3944, df=7
-t.test(NRI~plant_status, diversity, var.equal=T) #NRI not different, t=0.18774, p=0.8564, df=7
-t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=0.18373, p=0.8594, df=7
+t.test(SR~plant_status, diversity, var.equal=T) #SR not different, t=2.2485, p=0.05933, df=7
+t.test(PD~plant_status, diversity, var.equal=T) #PD not different, t=0.1785, p=0.8634, df=7
+t.test(MPD~plant_status, diversity, var.equal=T) #MPD not different, t=-0.38019, p=0.7151, df=7
+t.test(NRI~plant_status, diversity, var.equal=T) #NRI not different, t=2.3011, p=0.0549, df=7
+t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=2.1166, p=0.07208, df=7
 
 #PD and MPD
 PDplot<-ggplot(data=barGraphStats(data=diversity, variable="PD", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
   geom_bar(stat="identity") +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
-  scale_y_continuous(breaks=seq(0, 1.8, 0.4), name="PD") +
+  scale_y_continuous(breaks=seq(0, 0.4, 0.1), name="Phylogenetic Diversity") +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  coord_cartesian(ylim=c(0, 1.8)) +
+  coord_cartesian(ylim=c(0, 0.4)) +
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
   theme(legend.position="none")
@@ -95,9 +95,9 @@ PDplot<-ggplot(data=barGraphStats(data=diversity, variable="PD", byFactorNames=c
 MPDplot<-ggplot(data=barGraphStats(data=diversity, variable="MPD", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
   geom_bar(stat="identity") +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
-  scale_y_continuous(breaks=seq(0, 0.40, 0.1), name="MPD") +
+  scale_y_continuous(breaks=seq(0, 0.2, 0.05), name="Mean Pairwise Distance") +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  coord_cartesian(ylim=c(0, 0.4)) +
+  coord_cartesian(ylim=c(0, 0.2)) +
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
   theme(legend.position="none")
@@ -111,8 +111,8 @@ NRIplot<-ggplot(data=barGraphStats(data=diversity, variable="NRI", byFactorNames
   geom_bar(stat="identity") +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0, 1.2, 0.2), name="NRI") +
-  coord_cartesian(ylim=c(0, 1.2)) +
+  scale_y_continuous(breaks=seq(0, 0.9, 0.2), name="Net Relatedness Index") +
+  coord_cartesian(ylim=c(0, 0.9)) +
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
   theme(legend.position="none")
@@ -121,8 +121,8 @@ NTIplot<-ggplot(data=barGraphStats(data=diversity, variable="NTI", byFactorNames
   geom_bar(stat="identity") +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0, 1.2, 0.2), name="NTI") +
-  coord_cartesian(ylim=c(0, 1.2)) +
+  scale_y_continuous(breaks=seq(0, 0.9, 0.2), name="Nearest Taxon Index") +
+  coord_cartesian(ylim=c(0, 0.9)) +
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
   theme(legend.position="none")
@@ -133,11 +133,11 @@ print(NTIplot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
 
 
 ###Chao richness estimates
-plantStrainRichness <- specnumber(ITSbjBayAreaInteractionMatrix[,3:40]) #gives strain richness for each plant species based on abundance data
+plantStrainRichness <- specnumber(ITSbjBayAreaInteractionMatrix[,3:23]) #gives strain richness for each plant species based on abundance data
 
-totalStrainPool <- specpool(ITSbjBayAreaInteractionMatrix[,3:40]) #estimate total strain pool across all plant species
+totalStrainPool <- specpool(ITSbjBayAreaInteractionMatrix[,3:23]) #estimate total strain pool across all plant species
 
-speciesStrainRichness <- data.frame(estimateR(ITSbjBayAreaInteractionMatrix[,3:40])) #estimates Chao strain richness for each plant species
+speciesStrainRichness <- data.frame(estimateR(ITSbjBayAreaInteractionMatrix[,3:23])) #estimates Chao strain richness for each plant species
 
 speciesStrainRichness <- cbind(row_names=rownames(speciesStrainRichness), speciesStrainRichness)%>%
   gather(key=type, value=estimate, -row_names)%>%
@@ -147,14 +147,14 @@ speciesStrainRichness <- cbind(row_names=rownames(speciesStrainRichness), specie
   mutate(plant_status=ifelse(plant_species=='Acmispon angustissimus', 'invasive', ifelse(plant_species=='Genista monspessulana', 'invasive', ifelse(plant_species=='Spartium junceum', 'invasive', ifelse(plant_species=='Ulex europaeus', 'invasive', 'native')))))
   
 ###ttest for Chao richness
-t.test(S.chao1~plant_status, speciesStrainRichness, var.equal=T) #Chao richness estimate not different, t=0.67012, p=0.5216, df=8
+t.test(S.chao1~plant_status, speciesStrainRichness, var.equal=T) #Chao richness estimate not different, t=1.0181, p=0.3425, df=7
 
 chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.chao1", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
   geom_bar(stat="identity") +
   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0, 25, 5), name="Chao Richness Estimate") +
-  coord_cartesian(ylim=c(0, 25)) +
+  scale_y_continuous(breaks=seq(0, 14, 2), name="Chao Richness Estimate") +
+  coord_cartesian(ylim=c(0, 14)) +
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
   theme(legend.position="none")
