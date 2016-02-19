@@ -91,7 +91,7 @@ PDplot<-ggplot(data=barGraphStats(data=diversity, variable="PD", byFactorNames=c
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
   theme(legend.position="none") +
-  annotate('text', x=1, y=0.11, label='a', size=10) +
+  annotate('text', x=1, y=0.10, label='a', size=10) +
   annotate('text', x=2, y=0.26, label='b', size=10)
 
 MPDplot<-ggplot(data=barGraphStats(data=diversity, variable="MPD", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
@@ -104,7 +104,7 @@ MPDplot<-ggplot(data=barGraphStats(data=diversity, variable="MPD", byFactorNames
   scale_fill_manual(values=c("#FF9900", "#009900")) +
   theme(legend.position="none") +
   annotate('text', x=1, y=0.045, label='a', size=10) +
-  annotate('text', x=2, y=0.069, label='b', size=10)
+  annotate('text', x=2, y=0.067, label='b', size=10)
 
 pushViewport(viewport(layout=grid.layout(1,2))) 
 print(PDplot, vp=viewport(layout.pos.row=1, layout.pos.col=1))
@@ -162,8 +162,8 @@ chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.ch
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
   theme(legend.position="none") +
-  annotate('text', x=1, y=7.5, label='a', size=10) +
-  annotate('text', x=2, y=12, label='b', size=10)
+  annotate('text', x=1, y=7, label='a', size=10) +
+  annotate('text', x=2, y=11.5, label='b', size=10)
 
 
 #figure of Chao richness, PD, and MPD
