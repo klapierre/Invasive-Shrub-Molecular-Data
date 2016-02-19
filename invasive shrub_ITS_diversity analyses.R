@@ -13,7 +13,6 @@ theme_set(theme_bw())
 theme_update(axis.title.x=element_text(size=32, vjust=-0.35), axis.text.x=element_text(size=28),
              axis.title.y=element_text(size=32, angle=90, vjust=0.5), axis.text.y=element_text(size=28),
              plot.title = element_text(size=24, vjust=2),
-             axis.ticks.length=unit(-0.25, "cm"), axis.ticks.margin=unit(0.5, "cm"),
              panel.grid.major=element_blank(), panel.grid.minor=element_blank(),
              legend.title=element_blank(), legend.text=element_text(size=20))
 
@@ -160,10 +159,10 @@ chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.ch
   theme(legend.position="none")
 
 
-#figure of Chao richness, PD, and NRI
+#figure of Chao richness, PD, and MPD
 pushViewport(viewport(layout=grid.layout(1,3)))
 print(chaoPlot, vp=viewport(layout.pos.row=1, layout.pos.col=1))
 print(PDplot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
-print(NRIplot, vp=viewport(layout.pos.row=1, layout.pos.col=3))
+print(MPDplot, vp=viewport(layout.pos.row=1, layout.pos.col=3))
 
 
