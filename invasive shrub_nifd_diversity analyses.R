@@ -161,9 +161,9 @@ chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.ch
   coord_cartesian(ylim=c(0, 12)) +
   xlab("Plant Status") +
   scale_fill_manual(values=c("#FF9900", "#009900")) +
-  theme(legend.position="none") +
-  annotate('text', x=1, y=7, label='a', size=10) +
-  annotate('text', x=2, y=11.5, label='b', size=10)
+  theme(legend.position="none") #+
+#   annotate('text', x=1, y=7, label='a', size=10) +
+#   annotate('text', x=2, y=11.5, label='b', size=10)
 
 
 #figure of Chao richness, PD, and MPD
