@@ -4,6 +4,7 @@ library(ggplot2)
 library(reshape2)
 library(grid)
 library(vegan)
+library(BiodiversityR)
 library(tidyr)
 library(dplyr)
 library(bipartite)
@@ -172,6 +173,34 @@ print(chaoPlot, vp=viewport(layout.pos.row=1, layout.pos.col=1))
 print(PDplot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
 print(MPDplot, vp=viewport(layout.pos.row=1, layout.pos.col=3))
 
+
+
+#rank abundance curves of strains
+rankAbundInv <- rankabundance(x=as.matrix(nifdBjBayAreaInteractionMatrix[c(1:3),c(-1:-2, -28:-29)]))
+rankPlotInv <- ggplot(data=subset(as.data.frame(rankAbundInv), proportion>0), aes(x=rank, y=proportion)) +
+  geom_line() +
+  geom_point() +
+  xlab('Species Rank') +
+  ylab('Proportional Abundance') +
+  scale_x_continuous(expand=c(0,0), limits=c(0.5,17), breaks=seq(0,17,5)) +
+  scale_y_continuous(expand=c(0,0), limits=c(0,60), breaks=seq(0,60,10)) +
+  geom_text(aes(y=proportion+0.5, x=rank+0.1, label=rownames(rankAbundInv[1:16,]), hjust='left', vjust='bottom'), angle=25, size=5) +
+  annotate('text', x=0.6, y=55, label='(b) Invasive Legumes', size=10, hjust='left')
+
+rankAbundNat <- rankabundance(x=as.matrix(nifdBjBayAreaInteractionMatrix[c(4:9),c(-1:-2, -28:-29)]))
+rankPlotNat <- ggplot(data=subset(as.data.frame(rankAbundNat), proportion>0), aes(x=rank, y=proportion)) +
+  geom_line() +
+  geom_point() +
+  xlab('Species Rank') +
+  ylab('Proportional Abundance') +
+  scale_x_continuous(expand=c(0,0), limits=c(0.5,17), breaks=seq(0,17,5)) +
+  scale_y_continuous(expand=c(0,0), limits=c(0,60), breaks=seq(0,60,10)) +
+  geom_text(aes(y=proportion+0.5, x=rank+0.1, label=rownames(rankAbundNat[1:12,]), hjust='left', vjust='bottom'), angle=25, size=5) +
+  annotate('text', x=0.6, y=55, label='(a) Native Legumes', size=10, hjust='left')
+
+pushViewport(viewport(layout=grid.layout(2,1)))
+print(rankPlotNat, vp=viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(rankPlotInv, vp=viewport(layout.pos.row = 2, layout.pos.col = 1))
 
 
 
