@@ -40,7 +40,7 @@ barGraphStats <- function(data, variable, byFactorNames) {
 #source data management code
 source('Invasive Shrub Molecular Data Analysis\\Invasive-Shrub-Molecular-Data\\invasive shrub_concatenated_data management.R')
 
-#drop reference strains from tree
+#bayesian tree
 BjBayAreaconctree<-drop.tip(BjBayAreaconctree, c('Mesorhizobium_ciceri_USDA3383_ITS_AF345262_1', 'Rhizobium_leguminosarum_X01z', 'B_elkanii_USDA76_ITS_AF345254_1', 'B_yuanmingense_LMG21827_ITS_AY386734_1', 'B_canariense_BTA1_ITS_AY386708_1', 'B_liaoningense_USDA3622_ITS_AF345256_1'))
 plot.phylo(BjBayAreaconctree, use.edge.length=F)
 
@@ -168,32 +168,3 @@ print(chaoPlot, vp=viewport(layout.pos.row=1, layout.pos.col=1))
 print(PDplot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
 print(MPDplot, vp=viewport(layout.pos.row=1, layout.pos.col=3))
 
-
-
-
-#rank abundance curves of strains
-rankAbundInv <- rankabundance(x=as.matrix(concbjBayAreaInteractionMatrix[c(1:3),c(-1:-2, -22:-23)]))
-rankPlotInv <- ggplot(data=subset(as.data.frame(rankAbundInv), proportion>0), aes(x=rank, y=proportion)) +
-  geom_line() +
-  geom_point() +
-  xlab('Species Rank') +
-  ylab('Proportional Abundance') +
-  scale_x_continuous(expand=c(0,0), limits=c(0.5,13), breaks=seq(0,13,5)) +
-  scale_y_continuous(expand=c(0,0), limits=c(0,79), breaks=seq(0,79,10)) +
-  geom_text(aes(y=proportion+0.5, x=rank+0.1, label=rownames(rankAbundInv[1:12,]), hjust='left', vjust='bottom'), angle=25, size=5) +
-  annotate('text', x=0.6, y=76, label='(b) Invasive Legumes', size=10, hjust='left')
-
-rankAbundNat <- rankabundance(x=as.matrix(concbjBayAreaInteractionMatrix[c(4:9),c(-1:-2, -22:-23)]))
-rankPlotNat <- ggplot(data=subset(as.data.frame(rankAbundNat), proportion>0), aes(x=rank, y=proportion)) +
-  geom_line() +
-  geom_point() +
-  xlab('Species Rank') +
-  ylab('Proportional Abundance') +
-  scale_x_continuous(expand=c(0,0), limits=c(0.5,13), breaks=seq(0,13,5)) +
-  scale_y_continuous(expand=c(0,0), limits=c(0,79), breaks=seq(0,79,10)) +
-  geom_text(aes(y=proportion+0.5, x=rank+0.1, label=rownames(rankAbundNat[1:9,]), hjust='left', vjust='bottom'), angle=25, size=5) +
-  annotate('text', x=0.6, y=76, label='(a) Native Legumes', size=10, hjust='left')
-
-pushViewport(viewport(layout=grid.layout(2,1)))
-print(rankPlotNat, vp=viewport(layout.pos.row = 1, layout.pos.col = 1))
-print(rankPlotInv, vp=viewport(layout.pos.row = 2, layout.pos.col = 1))

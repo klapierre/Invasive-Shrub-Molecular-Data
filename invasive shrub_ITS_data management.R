@@ -28,8 +28,8 @@ concITStree<-drop.tip(ITStreeR, c('ITS_013', 'ITS_018', 'ITS_020', 'ITS_034', 'I
 plot.phylo(concITStree, use.edge.length=F)
 
 
-#making a tree with only Brady japonicum strains
-BjITStree<-drop.tip(concITStree, c('ITS_026', 'ITS_028', 'ITS_029', 'ITS_031', 'ITS_032', 'ITS_033'))
+#making a tree with only Brady japonicum strains, excluding Australian Ulex
+BjITStree<-drop.tip(concITStree, c('ITS_026', 'ITS_028', 'ITS_029', 'ITS_031', 'ITS_032', 'ITS_033', 'ITS_011', 'ITS_021', 'Rhizobium_leguminosarum_X01z_ITS'))
 plot.phylo(BjITStree, use.edge.length=F)
 
 
