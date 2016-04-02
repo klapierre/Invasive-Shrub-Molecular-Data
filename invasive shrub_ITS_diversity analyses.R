@@ -143,12 +143,12 @@ speciesStrainRichness <- data.frame(estimateR(ITSbjBayAreaInteractionMatrix[,3:2
 speciesStrainRichness <- cbind(row_names=rownames(speciesStrainRichness), speciesStrainRichness)%>%
   gather(key=type, value=estimate, -row_names)%>%
   filter(type!='row_names')%>%
-  mutate(plant_species=ifelse(type=='X1', 'Acmispon angustissimus', ifelse(type=='X2', 'Genista monspessulana', ifelse(type=='X3', 'Spartium junceum', ifelse(type=='X4', 'Ulex europaeus', ifelse(type=='X5', 'Acmispon glaber', ifelse(type=='X6', 'Acmispon heermannii', ifelse(type=='X7', 'Acmispon micranthus', ifelse(type=='X8', 'Acmispon strigosus', ifelse(type=='X9', 'Lupinus arboreous', 'Lupinus bicolor'))))))))))%>%
+  mutate(plant_species=ifelse(type=='X1', 'Genista monspessulana', ifelse(type=='X2', 'Spartium junceum', ifelse(type=='X3', 'Ulex europaeus', ifelse(type=='X4', 'Acmispon glaber', ifelse(type=='X5', 'Acmispon heermannii', ifelse(type=='X6', 'Acmispon micranthus', ifelse(type=='X7', 'Acmispon strigosus', ifelse(type=='X8', 'Lupinus arboreous', 'Lupinus bicolor')))))))))%>%
   spread(key=row_names, value=estimate)%>%
-  mutate(plant_status=ifelse(plant_species=='Acmispon angustissimus', 'invasive', ifelse(plant_species=='Genista monspessulana', 'invasive', ifelse(plant_species=='Spartium junceum', 'invasive', ifelse(plant_species=='Ulex europaeus', 'invasive', 'native')))))
+  mutate(plant_status=ifelse(plant_species=='Acmispon angustissimus'|plant_species=='Genista monspessulana'|plant_species=='Spartium junceum'|plant_species=='Ulex europaeus', 'invasive', 'native'))
   
 ###ttest for Chao richness
-t.test(S.chao1~plant_status, speciesStrainRichness, var.equal=T) #Chao richness estimate not different, t=1.0181, p=0.3425, df=7
+t.test(S.chao1~plant_status, speciesStrainRichness, var.equal=T) #Chao richness estimate not different, t=1.7346, p=0.1264, df=7
 
 chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.chao1", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
   geom_bar(stat="identity") +
@@ -160,6 +160,18 @@ chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.ch
   scale_fill_manual(values=c("#FF9900", "#009900")) +
   theme(legend.position="none")
 
+#chao boxplot with dots
+speciesStrainRichness <- speciesStrainRichness%>%
+  mutate(plant_code=ifelse(plant_species=='Acmispon micranthus', 'ACMI', ifelse(plant_species=='Lupinus arboreous', 'LUAR', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Acmispon glaber', 'ACGL, ACHE', ifelse(plant_species=='Acmispon heermannii', 'ACGL, ACHE', ifelse(plant_species=='Spartium junceum', 'SPJU', ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', 'ULEU'))))))))))
+
+ggplot(data=speciesStrainRichness, aes(x=plant_status, y=S.chao1, label=plant_code)) +
+  geom_boxplot() +
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
+  geom_text(hjust='left', vjust='center', nudge_x=0.05, size=8) +
+  scale_x_discrete(limits=c('native', 'invasive')) +
+  scale_y_continuous(breaks=seq(0, 24, 4), name="Chao Richness Estimate") +
+  coord_cartesian(ylim=c(0, 24)) +
+  xlab("Plant Status")
 
 #figure of Chao richness, PD, and MPD
 pushViewport(viewport(layout=grid.layout(1,3)))
@@ -174,7 +186,7 @@ rankAbundInv <- rankabundance(x=as.matrix(ITSbjBayAreaInteractionMatrix[c(1:3),c
 rankPlotInv <- ggplot(data=subset(as.data.frame(rankAbundInv), proportion>0), aes(x=rank, y=proportion)) +
   geom_line() +
   geom_point() +
-  xlab('Species Rank') +
+  xlab('OTU Rank') +
   ylab('Proportional Abundance') +
   scale_x_continuous(expand=c(0,0), limits=c(0.5,16), breaks=seq(0,16,5)) +
   scale_y_continuous(expand=c(0,0), limits=c(0,79), breaks=seq(0,79,10)) +
@@ -185,7 +197,7 @@ rankAbundNat <- rankabundance(x=as.matrix(ITSbjBayAreaInteractionMatrix[c(4:9),c
 rankPlotNat <- ggplot(data=subset(as.data.frame(rankAbundNat), proportion>0), aes(x=rank, y=proportion)) +
   geom_line() +
   geom_point() +
-  xlab('Species Rank') +
+  xlab('OTU Rank') +
   ylab('Proportional Abundance') +
   scale_x_continuous(expand=c(0,0), limits=c(0.5,16), breaks=seq(0,16,5)) +
   scale_y_continuous(expand=c(0,0), limits=c(0,79), breaks=seq(0,79,10)) +
