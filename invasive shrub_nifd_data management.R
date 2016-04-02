@@ -29,7 +29,8 @@ plot.phylo(BjBayAreanifdtree, use.edge.length=F)
 
 #making a tree with only Brady japonicum strains, excluding Australian Ulex
 Bjnifdtree<-drop.tip(nifdtreeR, c('nifd_028', 'nifd_019', 'nifd_021', 'nifd_029', 'Rhizobium_leguminosarum_X01z_nifd'))
-plot.phylo(Bjnifdtree, use.edge.length=F)
+plot.phylo(Bjnifdtree, show.node.label=T)
+nodelabels(frame='none', cex=0.8)
 
 
 #####################

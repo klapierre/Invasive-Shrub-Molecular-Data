@@ -41,7 +41,7 @@ plot.phylo(BjBayAreaconctree, use.edge.length=F)
 #read in nodule data
 concnodules <- read.csv('strain data\\La Pierre_invasion molecular manuscript_strain information_01252016.csv')%>%
   select(plant_species, plant_status, nodule_ID, concatenated_OTU_98)
-  
+
 #create an interaction matrix of strains for each plant species
 concinteractionMatrix <- concnodules%>%
   select(plant_species, plant_status, nodule_ID, concatenated_OTU_98)%>%
@@ -58,17 +58,3 @@ concbjBayAreaInteractionMatrix <- concinteractionMatrix%>%
   group_by(plant_status, plant_species, concatenated_OTU_98)%>%
   summarise(interaction=sum(interaction))%>%
   spread(key=concatenated_OTU_98, value=interaction)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
