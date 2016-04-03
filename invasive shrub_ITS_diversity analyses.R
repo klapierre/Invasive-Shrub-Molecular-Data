@@ -50,87 +50,87 @@ ITSbjBayAreaInteractionMatrix <- ITSbjBayAreaInteractionMatrix%>%
   mutate(plant_code=ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Acmispon glaber', 'ACGL', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Acmispon micranthus', 'ACMI', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', ifelse(plant_species=='Spartium junceum', 'SPJU', ifelse(plant_species=='Lupinus arboreous', 'LUAR', 'ULEU'))))))))), type=as.character(paste(plant_code, plant_status, sep='_')))
 
 
-#calculate diversity metrics
-PD <- pd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], BjBayAreaITStree, include.root=F) #phylogenetic diversity
+# #calculate diversity metrics
+# PD <- pd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], BjBayAreaITStree, include.root=F) #phylogenetic diversity
+# 
+# MPD <- mpd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], cophenetic(BjBayAreaITStree)) #mean pairwise distance
+# 
+# phydist <- cophenetic(BjBayAreaITStree) #matrix of phylogenetic distances among all pairs
+# 
+# ses.mpd <- ses.mpd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100)%>%
+#   select(-runs, -ntaxa) #net relatedness index
+# 
+# ses.mntd <- ses.mntd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100) #nearest taxon index
+# 
+# #combine diversity metrics into one dataset
+# diversity <- cbind(PD, MPD, ses.mpd, ses.mntd)%>%
+#   mutate(NRI=mpd.obs.z*(-1), NTI=mntd.obs.z*(-1))%>%
+#   select(PD, SR, MPD, NRI, NTI)
 
-MPD <- mpd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], cophenetic(BjBayAreaITStree)) #mean pairwise distance
-
-phydist <- cophenetic(BjBayAreaITStree) #matrix of phylogenetic distances among all pairs
-
-ses.mpd <- ses.mpd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100)%>%
-  select(-runs, -ntaxa) #net relatedness index
-
-ses.mntd <- ses.mntd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], phydist, null.model="taxa.labels", abundance.weighted=T, runs=100) #nearest taxon index
-
-#combine diversity metrics into one dataset
-diversity <- cbind(PD, MPD, ses.mpd, ses.mntd)%>%
-  mutate(NRI=mpd.obs.z*(-1), NTI=mntd.obs.z*(-1))%>%
-  select(PD, SR, MPD, NRI, NTI)
-
-#get back species type
-diversity <- cbind(ITSbjBayAreaInteractionMatrix$type, ITSbjBayAreaInteractionMatrix$plant_status, ITSbjBayAreaInteractionMatrix$plant_species, diversity)
-diversity[is.na(diversity)] <- 0
-names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$type'] <- 'type'
-names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$plant_status'] <- 'plant_status'
-names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$plant_species'] <- 'plant_species'
+# #get back species type
+# diversity <- cbind(ITSbjBayAreaInteractionMatrix$type, ITSbjBayAreaInteractionMatrix$plant_status, ITSbjBayAreaInteractionMatrix$plant_species, diversity)
+# diversity[is.na(diversity)] <- 0
+# names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$type'] <- 'type'
+# names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$plant_status'] <- 'plant_status'
+# names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$plant_species'] <- 'plant_species'
 
 
-###student's ttest (assumes equal variances)
-t.test(SR~plant_status, diversity, var.equal=T) #SR not different, t=2.2485, p=0.05933, df=7
-t.test(PD~plant_status, diversity, var.equal=T) #PD not different, t=0.1785, p=0.8634, df=7
-t.test(MPD~plant_status, diversity, var.equal=T) #MPD not different, t=-0.38019, p=0.7151, df=7
-t.test(NRI~plant_status, diversity, var.equal=T) #NRI not different, t=1.7542, p=0.1228, df=7
-t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=1.9712, p=0.08933, df=7
+# ###student's ttest (assumes equal variances)
+# t.test(SR~plant_status, diversity, var.equal=T) #SR not different, t=2.2485, p=0.05933, df=7
+# t.test(PD~plant_status, diversity, var.equal=T) #PD not different, t=0.1785, p=0.8634, df=7
+# t.test(MPD~plant_status, diversity, var.equal=T) #MPD not different, t=-0.38019, p=0.7151, df=7
+# t.test(NRI~plant_status, diversity, var.equal=T) #NRI not different, t=1.7542, p=0.1228, df=7
+# t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=1.9712, p=0.08933, df=7
 
-#PD and MPD
-PDplot<-ggplot(data=barGraphStats(data=diversity, variable="PD", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
-  geom_bar(stat="identity") +
-  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
-  scale_y_continuous(breaks=seq(0, 0.4, 0.1), name="Phylogenetic Diversity") +
-  scale_x_discrete(limits=c('native', 'invasive')) +
-  coord_cartesian(ylim=c(0, 0.4)) +
-  xlab("Plant Status") +
-  scale_fill_manual(values=c("#FF9900", "#009900")) +
-  theme(legend.position="none")
-
-MPDplot<-ggplot(data=barGraphStats(data=diversity, variable="MPD", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
-  geom_bar(stat="identity") +
-  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
-  scale_y_continuous(breaks=seq(0, 0.2, 0.05), name="Mean Pairwise Distance") +
-  scale_x_discrete(limits=c('native', 'invasive')) +
-  coord_cartesian(ylim=c(0, 0.2)) +
-  xlab("Plant Status") +
-  scale_fill_manual(values=c("#FF9900", "#009900")) +
-  theme(legend.position="none")
-
-pushViewport(viewport(layout=grid.layout(1,2))) 
-print(PDplot, vp=viewport(layout.pos.row=1, layout.pos.col=1))
-print(MPDplot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
-
-#NRI and NTI
-NRIplot<-ggplot(data=barGraphStats(data=diversity, variable="NRI", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
-  geom_bar(stat="identity") +
-  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
-  scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0, 0.9, 0.2), name="Net Relatedness Index") +
-  coord_cartesian(ylim=c(0, 0.9)) +
-  xlab("Plant Status") +
-  scale_fill_manual(values=c("#FF9900", "#009900")) +
-  theme(legend.position="none")
-
-NTIplot<-ggplot(data=barGraphStats(data=diversity, variable="NTI", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
-  geom_bar(stat="identity") +
-  geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
-  scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0, 0.9, 0.2), name="Nearest Taxon Index") +
-  coord_cartesian(ylim=c(0, 0.9)) +
-  xlab("Plant Status") +
-  scale_fill_manual(values=c("#FF9900", "#009900")) +
-  theme(legend.position="none")
-
-pushViewport(viewport(layout=grid.layout(1,2)))
-print(NRIplot, vp=viewport(layout.pos.row=1, layout.pos.col=1))
-print(NTIplot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
+# #PD and MPD
+# PDplot<-ggplot(data=barGraphStats(data=diversity, variable="PD", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
+#   geom_bar(stat="identity") +
+#   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
+#   scale_y_continuous(breaks=seq(0, 0.4, 0.1), name="Phylogenetic Diversity") +
+#   scale_x_discrete(limits=c('native', 'invasive')) +
+#   coord_cartesian(ylim=c(0, 0.4)) +
+#   xlab("Plant Status") +
+#   scale_fill_manual(values=c("#FF9900", "#009900")) +
+#   theme(legend.position="none")
+# 
+# MPDplot<-ggplot(data=barGraphStats(data=diversity, variable="MPD", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
+#   geom_bar(stat="identity") +
+#   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
+#   scale_y_continuous(breaks=seq(0, 0.2, 0.05), name="Mean Pairwise Distance") +
+#   scale_x_discrete(limits=c('native', 'invasive')) +
+#   coord_cartesian(ylim=c(0, 0.2)) +
+#   xlab("Plant Status") +
+#   scale_fill_manual(values=c("#FF9900", "#009900")) +
+#   theme(legend.position="none")
+# 
+# pushViewport(viewport(layout=grid.layout(1,2))) 
+# print(PDplot, vp=viewport(layout.pos.row=1, layout.pos.col=1))
+# print(MPDplot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
+# 
+# #NRI and NTI
+# NRIplot<-ggplot(data=barGraphStats(data=diversity, variable="NRI", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
+#   geom_bar(stat="identity") +
+#   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
+#   scale_x_discrete(limits=c('native', 'invasive')) +
+#   scale_y_continuous(breaks=seq(0, 0.9, 0.2), name="Net Relatedness Index") +
+#   coord_cartesian(ylim=c(0, 0.9)) +
+#   xlab("Plant Status") +
+#   scale_fill_manual(values=c("#FF9900", "#009900")) +
+#   theme(legend.position="none")
+# 
+# NTIplot<-ggplot(data=barGraphStats(data=diversity, variable="NTI", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
+#   geom_bar(stat="identity") +
+#   geom_errorbar(aes(ymin=mean-se, ymax=mean+se, width=0.2)) +
+#   scale_x_discrete(limits=c('native', 'invasive')) +
+#   scale_y_continuous(breaks=seq(0, 0.9, 0.2), name="Nearest Taxon Index") +
+#   coord_cartesian(ylim=c(0, 0.9)) +
+#   xlab("Plant Status") +
+#   scale_fill_manual(values=c("#FF9900", "#009900")) +
+#   theme(legend.position="none")
+# 
+# pushViewport(viewport(layout=grid.layout(1,2)))
+# print(NRIplot, vp=viewport(layout.pos.row=1, layout.pos.col=1))
+# print(NTIplot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
 
 
 ###Chao richness estimates
@@ -173,11 +173,11 @@ ggplot(data=speciesStrainRichness, aes(x=plant_status, y=S.chao1, label=plant_co
   coord_cartesian(ylim=c(0, 24)) +
   xlab("Plant Status")
 
-#figure of Chao richness, PD, and MPD
-pushViewport(viewport(layout=grid.layout(1,3)))
-print(chaoPlot, vp=viewport(layout.pos.row=1, layout.pos.col=1))
-print(PDplot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
-print(MPDplot, vp=viewport(layout.pos.row=1, layout.pos.col=3))
+# #figure of Chao richness, PD, and MPD
+# pushViewport(viewport(layout=grid.layout(1,3)))
+# print(chaoPlot, vp=viewport(layout.pos.row=1, layout.pos.col=1))
+# print(PDplot, vp=viewport(layout.pos.row=1, layout.pos.col=2))
+# print(MPDplot, vp=viewport(layout.pos.row=1, layout.pos.col=3))
 
 
 
@@ -186,7 +186,7 @@ rankAbundInv <- rankabundance(x=as.matrix(ITSbjBayAreaInteractionMatrix[c(1:3),c
 rankPlotInv <- ggplot(data=subset(as.data.frame(rankAbundInv), proportion>0), aes(x=rank, y=proportion)) +
   geom_line() +
   geom_point() +
-  xlab('OTU Rank') +
+  xlab('Genotype Rank') +
   ylab('Proportional Abundance') +
   scale_x_continuous(expand=c(0,0), limits=c(0.5,16), breaks=seq(0,16,5)) +
   scale_y_continuous(expand=c(0,0), limits=c(0,79), breaks=seq(0,79,10)) +
@@ -197,7 +197,7 @@ rankAbundNat <- rankabundance(x=as.matrix(ITSbjBayAreaInteractionMatrix[c(4:9),c
 rankPlotNat <- ggplot(data=subset(as.data.frame(rankAbundNat), proportion>0), aes(x=rank, y=proportion)) +
   geom_line() +
   geom_point() +
-  xlab('OTU Rank') +
+  xlab('Genotype Rank') +
   ylab('Proportional Abundance') +
   scale_x_continuous(expand=c(0,0), limits=c(0.5,16), breaks=seq(0,16,5)) +
   scale_y_continuous(expand=c(0,0), limits=c(0,79), breaks=seq(0,79,10)) +
