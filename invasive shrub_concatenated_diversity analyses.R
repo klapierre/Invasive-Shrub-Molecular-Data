@@ -173,7 +173,8 @@ ggplot(data=speciesStrainRichness, aes(x=plant_status, y=S.chao1, label=plant_co
   scale_x_discrete(limits=c('native', 'invasive')) +
   scale_y_continuous(breaks=seq(0, 14, 2), name="Chao Richness Estimate") +
   coord_cartesian(ylim=c(0, 14)) +
-  xlab("Plant Status")
+  xlab("Plant Status") +
+  theme(axis.title.x=element_text(margin=margin(l=10)))
 
 # #figure of Chao richness, PD, and MPD
 # pushViewport(viewport(layout=grid.layout(1,3)))
@@ -210,3 +211,23 @@ rankPlotNat <- ggplot(data=subset(as.data.frame(rankAbundNat), proportion>0), ae
 pushViewport(viewport(layout=grid.layout(2,1)))
 print(rankPlotNat, vp=viewport(layout.pos.row = 1, layout.pos.col = 1))
 print(rankPlotInv, vp=viewport(layout.pos.row = 2, layout.pos.col = 1))
+
+
+###community evenness
+#inverse simpson's evenness
+evenness <- as.data.frame(diversity(x=as.matrix(concbjBayAreaInteractionMatrix[,c(-1:-2, -22:-23)]), "inv"))
+names(evenness)[names(evenness)=='diversity(x = as.matrix(concbjBayAreaInteractionMatrix[, c(-1:-2, -22:-23)]), \"inv\")'] <- 'inv'
+evenness2 <- as.data.frame(cbind(concbjBayAreaInteractionMatrix$plant_status, concbjBayAreaInteractionMatrix$plant_code, evenness))
+names(evenness2)[names(evenness2)=='concbjBayAreaInteractionMatrix$plant_status'] <- 'plant_status'
+names(evenness2)[names(evenness2)=='concbjBayAreaInteractionMatrix$plant_code'] <- 'plant_code'
+t.test(inv~plant_status, evenness2, var.equal=T) #simpson's evenness not different, t=2.6519, p=0.03285, df=7
+
+#inverse simpson /s =  evenness
+S <- specnumber(x=as.matrix(concbjBayAreaInteractionMatrix[,c(-1:-2, -22:-23)]))
+inv <- diversity(x=as.matrix(concbjBayAreaInteractionMatrix[,c(-1:-2, -22:-23)]), "inv")
+evenness <- as.data.frame(inv/S)
+names(evenness)[names(evenness)=='inv/S'] <- 'evenness'
+evenness2 <- as.data.frame(cbind(concbjBayAreaInteractionMatrix$plant_status, concbjBayAreaInteractionMatrix$plant_code, evenness))
+names(evenness2)[names(evenness2)=='concbjBayAreaInteractionMatrix$plant_status'] <- 'plant_status'
+names(evenness2)[names(evenness2)=='concbjBayAreaInteractionMatrix$plant_code'] <- 'plant_code'
+t.test(evenness~plant_status, evenness2, var.equal=T) #simpson's evenness not different, t=2.6519, p=0.03285, df=7
