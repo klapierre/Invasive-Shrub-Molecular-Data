@@ -27,6 +27,13 @@ plot.phylo(contreeR, use.edge.length=F)
 #making a tree with only Brady japonicum strains and not including Australian Ulex
 Bjconctree<-drop.tip(contreeR, c('conc_019', 'conc_011', 'Rhizobium_leguminosarum_X01z'))
 plot.phylo(Bjconctree, use.edge.length=F)
+nodelabels(frame='none', cex=0.8)
+
+
+#making a tree with only Brady japonicum strains and not including Australian Ulex and dropping conc_020 because such a long branch
+Bjconctree<-drop.tip(contreeR, c('conc_019', 'conc_011', 'Rhizobium_leguminosarum_X01z', 'conc_020'))
+plot.phylo(Bjconctree, use.edge.length=T)
+nodelabels(frame='none', cex=0.8)
 
 
 #making a tree with only Brady japonicum strains from the Bay Area

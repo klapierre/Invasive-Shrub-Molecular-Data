@@ -25,13 +25,19 @@ plot.phylo(ITStreeR, use.edge.length=F)
 
 #remove strains that could not be concatenated with nifd
 concITStree<-drop.tip(ITStreeR, c('ITS_013', 'ITS_018', 'ITS_020', 'ITS_034', 'ITS_035', 'ITS_036'))
-plot.phylo(concITStree, show.node.label=T)
-nodelabels(frame='none', cex=0.8)
+plot.phylo(concITStree, show.node.label=T)plot.phylo(concITStree, show.node.label=T)
 
 
 #making a tree with only Brady japonicum strains, excluding Australian Ulex
 BjITStree<-drop.tip(concITStree, c('ITS_026', 'ITS_028', 'ITS_029', 'ITS_031', 'ITS_032', 'ITS_033', 'ITS_011', 'ITS_021', 'Rhizobium_leguminosarum_X01z_ITS'))
-plot.phylo(BjITStree, use.edge.length=F)
+plot.phylo(BjITStree, use.edge.length=T)
+nodelabels(frame='none', cex=0.8)
+
+
+#making a tree with only Brady japonicum strains, excluding Australian Ulex and ITS_030 (long branch length)
+BjITStree<-drop.tip(concITStree, c('ITS_026', 'ITS_028', 'ITS_029', 'ITS_031', 'ITS_032', 'ITS_033', 'ITS_011', 'ITS_021', 'Rhizobium_leguminosarum_X01z_ITS', 'ITS_030'))
+plot.phylo(BjITStree, use.edge.length=T)
+nodelabels(frame='none', cex=0.8)
 
 
 #making a tree with only Brady japonicum strains from the Bay Area
