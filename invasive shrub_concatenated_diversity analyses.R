@@ -12,8 +12,8 @@ library(dplyr)
 setwd('C:\\Users\\Kim\\Dropbox\\bigcb\\invasive shrubs project\\DNA work\\molecular data analysis')
 
 theme_set(theme_bw())
-theme_update(axis.title.x=element_text(size=32, vjust=-0.35), axis.text.x=element_text(size=28),
-             axis.title.y=element_text(size=32, angle=90, vjust=0.5), axis.text.y=element_text(size=28),
+theme_update(axis.title.x=element_text(size=20, vjust=-0.35, margin=margin(t=15)), axis.text.x=element_text(size=16),
+             axis.title.y=element_text(size=20, angle=90, vjust=0.5, margin=margin(r=15)), axis.text.y=element_text(size=16),
              plot.title = element_text(size=24, vjust=2),
              panel.grid.major=element_blank(), panel.grid.minor=element_blank(),
              legend.title=element_blank(), legend.text=element_text(size=20))
@@ -165,16 +165,28 @@ chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.ch
 #chao boxplot with dots
 speciesStrainRichness <- speciesStrainRichness%>%
   mutate(plant_code=ifelse(plant_species=='Acmispon micranthus', 'ACGL, ACMI', ifelse(plant_species=='Lupinus arboreous', 'LUAR', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Acmispon glaber', 'ACGL, ACMI', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Spartium junceum', 'SPJU', ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', 'ULEU'))))))))))
-  
+
 ggplot(data=speciesStrainRichness, aes(x=plant_status, y=S.chao1, label=plant_code)) +
   geom_boxplot() +
   geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
-  geom_text(hjust='left', vjust='center', nudge_x=0.05, size=8) +
+  geom_text(hjust='left', vjust='center', nudge_x=0.05, size=6) +
   scale_x_discrete(limits=c('native', 'invasive')) +
   scale_y_continuous(breaks=seq(0, 14, 2), name="Chao Richness Estimate") +
   coord_cartesian(ylim=c(0, 14)) +
   xlab("Plant Status") +
-  theme(axis.title.x=element_text(margin=margin(l=10)))
+  
+
+#colored
+ggplot(data=speciesStrainRichness, aes(x=plant_status, y=S.chao1, label=plant_code, fill=plant_status)) +
+  geom_boxplot() +
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
+  geom_text(hjust='left', vjust='center', nudge_x=0.05, size=6) +
+  scale_x_discrete(limits=c('native', 'invasive')) +
+  scale_y_continuous(breaks=seq(0, 14, 2), name="Chao Richness Estimate") +
+  coord_cartesian(ylim=c(0, 14)) +
+  scale_fill_manual(values=c("#FF9900", "#009900")) +
+  xlab("Plant Status") +
+  theme(legend.position='none')
 
 # #figure of Chao richness, PD, and MPD
 # pushViewport(viewport(layout=grid.layout(1,3)))
@@ -201,12 +213,51 @@ rankAbundNat <- rankabundance(x=as.matrix(concbjBayAreaInteractionMatrix[c(4:9),
 rankPlotNat <- ggplot(data=subset(as.data.frame(rankAbundNat), proportion>0), aes(x=rank, y=proportion)) +
   geom_line() +
   geom_point() +
-  xlab('Genotype Rank') +
+  xlab('') +
   ylab('Proportional Abundance') +
   scale_x_continuous(expand=c(0,0), limits=c(0.5,13), breaks=seq(0,13,5)) +
   scale_y_continuous(expand=c(0,0), limits=c(0,79), breaks=seq(0,79,10)) +
   geom_text(aes(y=proportion+0.5, x=rank+0.1, label=rownames(rankAbundNat[1:9,]), hjust='left', vjust='bottom'), angle=25, size=5) +
   annotate('text', x=0.6, y=76, label='(a) Native Legumes', size=10, hjust='left')
+
+pushViewport(viewport(layout=grid.layout(2,1)))
+print(rankPlotNat, vp=viewport(layout.pos.row = 1, layout.pos.col = 1))
+print(rankPlotInv, vp=viewport(layout.pos.row = 2, layout.pos.col = 1))
+
+
+#colored
+#rank abundance curves of strains
+rankAbundInv <- rankabundance(x=as.matrix(concbjBayAreaInteractionMatrix[c(1:3),c(-1:-2, -22:-23)]))
+rankPlotInv <- ggplot(data=subset(as.data.frame(rankAbundInv), proportion>0), aes(x=rank, y=proportion)) +
+  geom_line(color='#FF9900', size=2) +
+  geom_point() +
+  xlab('Genotype Rank') +
+  ylab('Proportional Abundance') +
+  scale_x_continuous(expand=c(0,0), limits=c(0.5,13), breaks=seq(0,13,5)) +
+  scale_y_continuous(expand=c(0,0), limits=c(0,79), breaks=seq(0,79,10)) +
+  geom_text(aes(y=proportion+0.5, x=rank+0.1, label=rownames(rankAbundInv[1:12,]), hjust='left', vjust='bottom'), angle=25, size=5) +
+  annotate('text', x=0.6, y=76, label='(b) Invasive Legumes', size=10, hjust='left') +
+  theme_update(axis.title.x=element_text(size=30, vjust=-0.35, margin=margin(t=15)), axis.text.x=element_text(size=24),
+               axis.title.y=element_text(size=30, angle=90, vjust=0.5, margin=margin(r=15)), axis.text.y=element_text(size=24),
+               plot.title = element_text(size=24, vjust=2),
+               panel.grid.major=element_blank(), panel.grid.minor=element_blank(),
+               legend.title=element_blank(), legend.text=element_text(size=20))
+
+rankAbundNat <- rankabundance(x=as.matrix(concbjBayAreaInteractionMatrix[c(4:9),c(-1:-2, -22:-23)]))
+rankPlotNat <- ggplot(data=subset(as.data.frame(rankAbundNat), proportion>0), aes(x=rank, y=proportion)) +
+  geom_line(color='#009900', size=2) +
+  geom_point() +
+  xlab('') +
+  ylab('Proportional Abundance') +
+  scale_x_continuous(expand=c(0,0), limits=c(0.5,13), breaks=seq(0,13,5)) +
+  scale_y_continuous(expand=c(0,0), limits=c(0,79), breaks=seq(0,79,10)) +
+  geom_text(aes(y=proportion+0.5, x=rank+0.1, label=rownames(rankAbundNat[1:9,]), hjust='left', vjust='bottom'), angle=25, size=5) +
+  annotate('text', x=0.6, y=76, label='(a) Native Legumes', size=10, hjust='left') +
+  theme_update(axis.title.x=element_text(size=30, vjust=-0.35, margin=margin(t=15)), axis.text.x=element_text(size=24),
+               axis.title.y=element_text(size=30, angle=90, vjust=0.5, margin=margin(r=15)), axis.text.y=element_text(size=24),
+               plot.title = element_text(size=24, vjust=2),
+               panel.grid.major=element_blank(), panel.grid.minor=element_blank(),
+               legend.title=element_blank(), legend.text=element_text(size=20))
 
 pushViewport(viewport(layout=grid.layout(2,1)))
 print(rankPlotNat, vp=viewport(layout.pos.row = 1, layout.pos.col = 1))

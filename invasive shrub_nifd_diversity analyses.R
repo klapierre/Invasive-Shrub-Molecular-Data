@@ -12,8 +12,8 @@ library(bipartite)
 setwd('C:\\Users\\Kim\\Dropbox\\bigcb\\invasive shrubs project\\DNA work\\molecular data analysis')
 
 theme_set(theme_bw())
-theme_update(axis.title.x=element_text(size=32, vjust=-0.35), axis.text.x=element_text(size=28),
-             axis.title.y=element_text(size=32, angle=90, vjust=0.5), axis.text.y=element_text(size=28),
+theme_update(axis.title.x=element_text(size=20, vjust=-0.35, margin=margin(t=15)), axis.text.x=element_text(size=16),
+             axis.title.y=element_text(size=20, angle=90, vjust=0.5, margin=margin(r=15)), axis.text.y=element_text(size=16),
              plot.title = element_text(size=24, vjust=2),
              panel.grid.major=element_blank(), panel.grid.minor=element_blank(),
              legend.title=element_blank(), legend.text=element_text(size=20))
@@ -174,7 +174,7 @@ speciesStrainRichness <- speciesStrainRichness%>%
 ggplot(data=speciesStrainRichness, aes(x=plant_status, y=S.chao1, label=plant_code)) +
   geom_boxplot() +
   geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
-  geom_text(hjust='left', vjust='center', nudge_x=0.05, size=8) +
+  geom_text(hjust='left', vjust='center', nudge_x=0.05, size=6) +
   scale_x_discrete(limits=c('native', 'invasive')) +
   scale_y_continuous(breaks=seq(0, 12, 2), name="Chao Richness Estimate") +
   coord_cartesian(ylim=c(0, 12)) +
@@ -206,7 +206,7 @@ rankAbundNat <- rankabundance(x=as.matrix(nifdBjBayAreaInteractionMatrix[c(4:9),
 rankPlotNat <- ggplot(data=subset(as.data.frame(rankAbundNat), proportion>0), aes(x=rank, y=proportion)) +
   geom_line() +
   geom_point() +
-  xlab('Genotype Rank') +
+  xlab('') +
   ylab('Proportional Abundance') +
   scale_x_continuous(expand=c(0,0), limits=c(0.5,17), breaks=seq(0,17,5)) +
   scale_y_continuous(expand=c(0,0), limits=c(0,60), breaks=seq(0,60,10)) +
