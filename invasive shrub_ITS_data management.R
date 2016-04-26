@@ -25,7 +25,7 @@ plot.phylo(ITStreeR, use.edge.length=F)
 
 #remove strains that could not be concatenated with nifd
 concITStree<-drop.tip(ITStreeR, c('ITS_013', 'ITS_018', 'ITS_020', 'ITS_034', 'ITS_035', 'ITS_036'))
-plot.phylo(concITStree, show.node.label=T)plot.phylo(concITStree, show.node.label=T)
+plot.phylo(concITStree, show.node.label=T)
 
 
 #making a tree with only Brady japonicum strains, excluding Australian Ulex
