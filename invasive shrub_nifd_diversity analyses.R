@@ -50,9 +50,9 @@ nifdBjBayAreaInteractionMatrix <- nifdBjBayAreaInteractionMatrix%>%
   mutate(plant_code=ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Acmispon glaber', 'ACGL', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Acmispon micranthus', 'ACMI', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', ifelse(plant_species=='Spartium junceum', 'SPJU', ifelse(plant_species=='Lupinus arboreous', 'LUAR', 'ULEU'))))))))), type=as.character(paste(plant_code, plant_status, sep='_')))
 
 
-# #calculate diversity metrics
-# PD <- pd(nifdBjBayAreaInteractionMatrix[,c(-1:-2, -28:-29)], BjBayAreanifdtree, include.root=F) #phylogenetic diversity
-# 
+#calculate diversity metrics
+PD <- pd(nifdBjBayAreaInteractionMatrix[,c(-1:-2, -28:-29)], BjBayAreanifdtree, include.root=F) #phylogenetic diversity
+
 # MPD <- mpd(nifdBjBayAreaInteractionMatrix[,c(-1:-2, -28:-29)], cophenetic(BjBayAreanifdtree)) #mean pairwise distance
 # 
 # phydist <- cophenetic(BjBayAreanifdtree) #matrix of phylogenetic distances among all pairs
@@ -67,20 +67,34 @@ nifdBjBayAreaInteractionMatrix <- nifdBjBayAreaInteractionMatrix%>%
 #   mutate(NRI=mpd.obs.z*(-1), NTI=mntd.obs.z*(-1))%>%
 #   select(PD, SR, MPD, NRI, NTI)
 
-# #get back species type
-# diversity <- cbind(nifdBjBayAreaInteractionMatrix$type, nifdBjBayAreaInteractionMatrix$plant_status, nifdBjBayAreaInteractionMatrix$plant_species, diversity)
-# diversity[is.na(diversity)] <- 0
-# names(diversity)[names(diversity)=='nifdBjBayAreaInteractionMatrix$type'] <- 'type'
-# names(diversity)[names(diversity)=='nifdBjBayAreaInteractionMatrix$plant_status'] <- 'plant_status'
-# names(diversity)[names(diversity)=='nifdBjBayAreaInteractionMatrix$plant_species'] <- 'plant_species'
+#get back species type
+diversity <- cbind(nifdBjBayAreaInteractionMatrix$type, nifdBjBayAreaInteractionMatrix$plant_status, nifdBjBayAreaInteractionMatrix$plant_species, PD)
+diversity[is.na(diversity)] <- 0
+names(diversity)[names(diversity)=='nifdBjBayAreaInteractionMatrix$type'] <- 'type'
+names(diversity)[names(diversity)=='nifdBjBayAreaInteractionMatrix$plant_status'] <- 'plant_status'
+names(diversity)[names(diversity)=='nifdBjBayAreaInteractionMatrix$plant_species'] <- 'plant_species'
 
 
 # ###student's ttest (assumes equal variances)
 # t.test(SR~plant_status, diversity, var.equal=T) #SR not different, t=2.1049, p=0.07334, df=7
-# t.test(PD~plant_status, diversity, var.equal=T) #PD different, t=4.7788, p=0.002015, df=7
+t.test(PD~plant_status, diversity, var.equal=T) #PD different, t=4.7788, p=0.002015, df=7
 # t.test(MPD~plant_status, diversity, var.equal=T) #MPD different, t=3.8197, p=0.006545, df=7
 # t.test(NRI~plant_status, diversity, var.equal=T) #NRI not different, t=0.48605, p=0.6418, df=7
 # t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=-0.82245, p=0.4379, df=7
+
+#PD boxplot with dots
+diversity <- diversity%>%
+  mutate(plant_code=ifelse(plant_species=='Acmispon micranthus', ' ', ifelse(plant_species=='Lupinus arboreus', 'LUAR', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Acmispon glaber', ' ', ifelse(plant_species=='Acmispon heermannii', 'ACGL, ACHE, ACMI', ifelse(plant_species=='Spartium junceum', 'SPJU', ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', 'ULEU'))))))))))
+
+nifdPDfig <- ggplot(data=diversity, aes(x=plant_status, y=PD, label=plant_code)) +
+  geom_boxplot() +
+  geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
+  geom_text(hjust='left', vjust='center', nudge_x=0.1, size=6) +
+  scale_x_discrete(limits=c('native', 'invasive')) +
+  scale_y_continuous(breaks=seq(0, 0.26, 0.05), name=" ") +
+  coord_cartesian(ylim=c(0, 0.26)) +
+  xlab("Plant Status") +
+  annotate('text', x=0.5, y=0.26, label='(d)', size=8, hjust='left')
 
 # #PD and MPD
 # PDplot<-ggplot(data=barGraphStats(data=diversity, variable="PD", byFactorNames=c("plant_status")), aes(x=plant_status, y=mean, fill=plant_status)) +
@@ -171,16 +185,26 @@ chaoPlot <- ggplot(data=barGraphStats(data=speciesStrainRichness, variable="S.ch
 speciesStrainRichness <- speciesStrainRichness%>%
   mutate(plant_code=ifelse(plant_species=='Acmispon micranthus', 'ACGL, ACMI', ifelse(plant_species=='Lupinus arboreous', 'LUAR', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Acmispon glaber', 'ACGL, ACMI', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Spartium junceum', 'SPJU', ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', 'ULEU'))))))))))
 
-ggplot(data=speciesStrainRichness, aes(x=plant_status, y=S.chao1, label=plant_code)) +
+nifdChaoFig <- ggplot(data=speciesStrainRichness, aes(x=plant_status, y=S.chao1, label=plant_code)) +
   geom_boxplot() +
   geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
   geom_text(hjust='left', vjust='center', nudge_x=0.05, size=6) +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0, 12, 2), name="Chao Richness Estimate") +
+  scale_y_continuous(breaks=seq(0, 12, 2), name=" ") +
   coord_cartesian(ylim=c(0, 12)) +
-  xlab("Plant Status")
+  xlab(" ") +
+  annotate('text', x=0.5, y=12, label='(c)', size=8, hjust='left')
 
+pushViewport(viewport(layout=grid.layout(2,1)))
+print(nifdChaoFig, vp=viewport(layout.pos.row=1, layout.pos.col=1))
+print(nifdPDfig, vp=viewport(layout.pos.row=2, layout.pos.col=1))
 
+#must have run ITS diversity first
+pushViewport(viewport(layout=grid.layout(2,2)))
+print(ITSChaoFig, vp=viewport(layout.pos.row=1, layout.pos.col=1))
+print(ITSPDfig, vp=viewport(layout.pos.row=2, layout.pos.col=1))
+print(nifdChaoFig, vp=viewport(layout.pos.row=1, layout.pos.col=2))
+print(nifdPDfig, vp=viewport(layout.pos.row=2, layout.pos.col=2))
 
 # #figure of Chao richness, PD, and MPD
 # pushViewport(viewport(layout=grid.layout(1,3)))
