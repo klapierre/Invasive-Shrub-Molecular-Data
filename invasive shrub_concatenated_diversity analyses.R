@@ -49,9 +49,12 @@ concbjBayAreaInteractionMatrix <- concbjBayAreaInteractionMatrix%>%
   #create a column combining status and species
   mutate(plant_code=ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Acmispon glaber', 'ACGL', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Acmispon micranthus', 'ACMI', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', ifelse(plant_species=='Spartium junceum', 'SPJU', ifelse(plant_species=='Lupinus arboreous', 'LUAR', 'ULEU'))))))))), type=as.character(paste(plant_code, plant_status, sep='_')))
 
+#pairwise OTU distance data
+concPairOTU <- read.csv('La Pierre_invasive shrub_avg pairwise OTU distances_jukes cantor.csv')
+
 
 #calculate diversity metrics
-PD <- pd(concbjBayAreaInteractionMatrix[,c(-1:-2, -22:-23)], BjBayAreaconctree, include.root=F) #phylogenetic diversity
+# PD <- pd(concbjBayAreaInteractionMatrix[,c(-1:-2, -22:-23)], BjBayAreaconctree, include.root=F) #phylogenetic diversity
 
 # MPD <- mpd(concbjBayAreaInteractionMatrix[,c(-1:-2, -22:-23)], cophenetic(BjBayAreaconctree)) #mean pairwise distance
 # 
@@ -74,12 +77,12 @@ PD <- pd(concbjBayAreaInteractionMatrix[,c(-1:-2, -22:-23)], BjBayAreaconctree, 
 # names(diversity)[names(diversity)=='concbjBayAreaInteractionMatrix$plant_status'] <- 'plant_status'
 # names(diversity)[names(diversity)=='concbjBayAreaInteractionMatrix$plant_species'] <- 'plant_species'
 
-#get back species type
-diversity <- cbind(concbjBayAreaInteractionMatrix$type, concbjBayAreaInteractionMatrix$plant_status, concbjBayAreaInteractionMatrix$plant_species, PD)
-diversity[is.na(diversity)] <- 0
-names(diversity)[names(diversity)=='concbjBayAreaInteractionMatrix$type'] <- 'type'
-names(diversity)[names(diversity)=='concbjBayAreaInteractionMatrix$plant_status'] <- 'plant_status'
-names(diversity)[names(diversity)=='concbjBayAreaInteractionMatrix$plant_species'] <- 'plant_species'
+# #get back species type
+# diversity <- cbind(concbjBayAreaInteractionMatrix$type, concbjBayAreaInteractionMatrix$plant_status, concbjBayAreaInteractionMatrix$plant_species, PD)
+# diversity[is.na(diversity)] <- 0
+# names(diversity)[names(diversity)=='concbjBayAreaInteractionMatrix$type'] <- 'type'
+# names(diversity)[names(diversity)=='concbjBayAreaInteractionMatrix$plant_status'] <- 'plant_status'
+# names(diversity)[names(diversity)=='concbjBayAreaInteractionMatrix$plant_species'] <- 'plant_species'
 
 
 ###student's ttest (assumes equal variances)
@@ -88,20 +91,18 @@ t.test(SR~plant_status, diversity, var.equal=T) #SR not different, t=2.0837, p=0
 # t.test(MPD~plant_status, diversity, var.equal=T) #MPD not different, t=-0.13967, p=0.8929, df=7
 # t.test(NRI~plant_status, diversity, var.equal=T) #NRI is different, t=3.9128, p=0.005802, df=7
 # t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=1.8548, p=0.106, df=7
+t.test(avg_pairwise_dist_conc~host_status, concPairOTU, var.equal=T) #pairwise distances not different, t=-1.6678, p=0.156, df=5
 
-#PD boxplot with dots
-diversity <- diversity%>%
-  mutate(plant_code=ifelse(plant_species=='Acmispon micranthus', 'ACGL, ACMI', ifelse(plant_species=='Lupinus arboreus', 'LUAR', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Acmispon glaber', 'ACGL, ACMI', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Spartium junceum', 'SPJU', ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', 'ULEU'))))))))))
-
-PDfig <- ggplot(data=diversity, aes(x=plant_status, y=PD, label=plant_code)) +
+#pairwise distances boxplot with dots
+PDfig <- ggplot(data=concPairOTU, aes(x=host_status, y=avg_pairwise_dist_conc, label=host_spp)) +
   geom_boxplot() +
   geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
   geom_text(hjust='left', vjust='center', nudge_x=0.05, size=6) +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0, 0.26, 0.05), name="Phylogenetic Diversity") +
-  coord_cartesian(ylim=c(0, 0.26)) +
+  scale_y_continuous(breaks=seq(0.2, 0.07, 0.02), name="Phylogenetic Diversity") +
+  coord_cartesian(ylim=c(0.2, 0.07)) +
   xlab("Plant Status") +
-  annotate('text', x=0.5, y=0.26, label='(b)', size=8, hjust='left')
+  annotate('text', x=0.5, y=0.07, label='(b)', size=8, hjust='left')
   
 
 # #PD and MPD
