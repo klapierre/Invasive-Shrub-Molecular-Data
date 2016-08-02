@@ -99,8 +99,8 @@ PDfig <- ggplot(data=concPairOTU, aes(x=host_status, y=avg_pairwise_dist_conc, l
   geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
   geom_text(hjust='left', vjust='center', nudge_x=0.05, size=6) +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0.2, 0.07, 0.02), name="Phylogenetic Diversity") +
-  coord_cartesian(ylim=c(0.2, 0.07)) +
+  scale_y_continuous(breaks=seq(0.02, 0.07, 0.01), name="Phylogenetic Diversity") +
+  coord_cartesian(ylim=c(0.02, 0.07)) +
   xlab("Plant Status") +
   annotate('text', x=0.5, y=0.07, label='(b)', size=8, hjust='left')
   
@@ -202,6 +202,7 @@ ChaoFig <- ggplot(data=speciesStrainRichness, aes(x=plant_status, y=S.chao1, lab
 pushViewport(viewport(layout=grid.layout(1,2)))
 print(ChaoFig, vp=viewport(layout.pos.row=1, layout.pos.col=1))
 print(PDfig, vp=viewport(layout.pos.row=1, layout.pos.col=2))
+#export at 1400x700
 
 
 #colored
