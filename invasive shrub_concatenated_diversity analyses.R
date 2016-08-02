@@ -86,12 +86,12 @@ concPairOTU <- read.csv('La Pierre_invasive shrub_avg pairwise OTU distances_juk
 
 
 ###student's ttest (assumes equal variances)
-t.test(SR~plant_status, diversity, var.equal=T) #SR not different, t=2.0837, p=0.07567, df=7
+# t.test(SR~plant_status, diversity, var.equal=T) #SR not different, t=2.0837, p=0.07567, df=7
 # t.test(PD~plant_status, diversity, var.equal=T) #PD not different, t=0.56525, p=0.5896, df=7
 # t.test(MPD~plant_status, diversity, var.equal=T) #MPD not different, t=-0.13967, p=0.8929, df=7
 # t.test(NRI~plant_status, diversity, var.equal=T) #NRI is different, t=3.9128, p=0.005802, df=7
 # t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=1.8548, p=0.106, df=7
-t.test(avg_pairwise_dist_conc~host_status, concPairOTU, var.equal=T) #pairwise distances not different, t=-1.6678, p=0.156, df=5
+t.test(avg_pairwise_dist_conc~host_status, concPairOTU, var.equal=T) #pairwise distances not different, t=-0.15506, p=0.8812, df=7
 
 #pairwise distances boxplot with dots
 PDfig <- ggplot(data=concPairOTU, aes(x=host_status, y=avg_pairwise_dist_conc, label=host_spp)) +
@@ -99,8 +99,8 @@ PDfig <- ggplot(data=concPairOTU, aes(x=host_status, y=avg_pairwise_dist_conc, l
   geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
   geom_text(hjust='left', vjust='center', nudge_x=0.05, size=6) +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0.02, 0.07, 0.01), name="Phylogenetic Diversity") +
-  coord_cartesian(ylim=c(0.02, 0.07)) +
+  scale_y_continuous(breaks=seq(0, 0.07, 0.01), name="Phylogenetic Diversity") +
+  coord_cartesian(ylim=c(0, 0.07)) +
   xlab("Plant Status") +
   annotate('text', x=0.5, y=0.07, label='(b)', size=8, hjust='left')
   
