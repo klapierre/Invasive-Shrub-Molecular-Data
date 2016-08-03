@@ -50,8 +50,12 @@ ITSbjBayAreaInteractionMatrix <- ITSbjBayAreaInteractionMatrix%>%
   mutate(plant_code=ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Acmispon glaber', 'ACGL', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Acmispon micranthus', 'ACMI', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', ifelse(plant_species=='Spartium junceum', 'SPJU', ifelse(plant_species=='Lupinus arboreous', 'LUAR', 'ULEU'))))))))), type=as.character(paste(plant_code, plant_status, sep='_')))
 
 
+#pairwise OTU distance data
+ITSPairOTU <- read.csv('La Pierre_invasive shrub_avg pairwise OTU distances_jukes cantor.csv')
+
+
 #calculate diversity metrics
-PD <- pd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], BjBayAreaITStree, include.root=F) #phylogenetic diversity
+# PD <- pd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], BjBayAreaITStree, include.root=F) #phylogenetic diversity
 
 # MPD <- mpd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], cophenetic(BjBayAreaITStree)) #mean pairwise distance
 # 
@@ -67,34 +71,36 @@ PD <- pd(ITSbjBayAreaInteractionMatrix[,c(-1:-2, -24:-25)], BjBayAreaITStree, in
 #   mutate(NRI=mpd.obs.z*(-1), NTI=mntd.obs.z*(-1))%>%
 #   select(PD, SR, MPD, NRI, NTI)
 
-#get back species type
-diversity <- cbind(ITSbjBayAreaInteractionMatrix$type, ITSbjBayAreaInteractionMatrix$plant_status, ITSbjBayAreaInteractionMatrix$plant_species, PD)
-diversity[is.na(diversity)] <- 0
-names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$type'] <- 'type'
-names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$plant_status'] <- 'plant_status'
-names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$plant_species'] <- 'plant_species'
+# #get back species type
+# diversity <- cbind(ITSbjBayAreaInteractionMatrix$type, ITSbjBayAreaInteractionMatrix$plant_status, ITSbjBayAreaInteractionMatrix$plant_species, PD)
+# diversity[is.na(diversity)] <- 0
+# names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$type'] <- 'type'
+# names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$plant_status'] <- 'plant_status'
+# names(diversity)[names(diversity)=='ITSbjBayAreaInteractionMatrix$plant_species'] <- 'plant_species'
 
 
 ###student's ttest (assumes equal variances)
 # t.test(SR~plant_status, diversity, var.equal=T) #SR not different, t=2.2485, p=0.05933, df=7
-t.test(PD~plant_status, diversity, var.equal=T) #PD not different, t=0.1785, p=0.8634, df=7
+# t.test(PD~plant_status, diversity, var.equal=T) #PD not different, t=0.1785, p=0.8634, df=7
 # t.test(MPD~plant_status, diversity, var.equal=T) #MPD not different, t=-0.38019, p=0.7151, df=7
 # t.test(NRI~plant_status, diversity, var.equal=T) #NRI not different, t=1.7542, p=0.1228, df=7
 # t.test(NTI~plant_status, diversity, var.equal=T) #NTI not different, t=1.9712, p=0.08933, df=7
+t.test(avg_pairwise_dist_ITS~host_status, ITSPairOTU, var.equal=T) #pairwise distance not different, t=-0.63379, p=0.546, df=7
 
-#PD boxplot with dots
-diversity <- diversity%>%
-  mutate(plant_code=ifelse(plant_species=='Acmispon micranthus', 'ACMI', ifelse(plant_species=='Lupinus arboreus', 'LUAR', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Acmispon glaber', 'ACGL', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Spartium junceum', 'SPJU', ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', 'ULEU'))))))))))
 
-ITSPDfig <- ggplot(data=diversity, aes(x=plant_status, y=PD, label=plant_code)) +
+# #PD boxplot with dots
+# diversity <- diversity%>%
+#   mutate(plant_code=ifelse(plant_species=='Acmispon micranthus', 'ACMI', ifelse(plant_species=='Lupinus arboreus', 'LUAR', ifelse(plant_species=='Acmispon strigosus', 'ACST', ifelse(plant_species=='Acmispon glaber', 'ACGL', ifelse(plant_species=='Acmispon heermannii', 'ACHE', ifelse(plant_species=='Spartium junceum', 'SPJU', ifelse(plant_species=='Acmispon angustissimus', 'ACAN', ifelse(plant_species=='Genista monspessulana', 'GEMO', ifelse(plant_species=='Lupinus bicolor', 'LUBI', 'ULEU'))))))))))
+
+ITSPDfig <- ggplot(data=ITSPairOTU, aes(x=host_status, y=avg_pairwise_dist_ITS, label=host_spp_ITS)) +
   geom_boxplot() +
   geom_dotplot(binaxis='y', stackdir='center', dotsize=1) +
   geom_text(hjust='left', vjust='center', nudge_x=0.05, size=6) +
   scale_x_discrete(limits=c('native', 'invasive')) +
-  scale_y_continuous(breaks=seq(0, 0.40, 0.05), name="Phylogenetic Diversity") +
-  coord_cartesian(ylim=c(0, 0.40)) +
+  scale_y_continuous(breaks=seq(0, 0.17, 0.02), name="Phylogenetic Diversity") +
+  coord_cartesian(ylim=c(0, 0.17)) +
   xlab("Plant Status") +
-  annotate('text', x=0.5, y=0.40, label='(b)', size=8, hjust='left')
+  annotate('text', x=0.5, y=0.17, label='(b)', size=8, hjust='left')
 
 
 # #PD and MPD
