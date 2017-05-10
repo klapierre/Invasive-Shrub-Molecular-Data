@@ -26,5 +26,5 @@ map <-  get_map(location=bounds, maptype="watercolor", source="stamen")
 
 ggmap(map) +
   geom_point(data=dat, aes(x=lon,y=lat), color='black', size=3) +
-  geom_text(data=dat, aes(label=as.character(Site_ID)), hjust=-0.3, angle=40)
+  geom_text(data=dat, aes(label=as.character(Site_ID)), hjust=-0.3, angle=40, size=10)
 #export at 1000x1000
